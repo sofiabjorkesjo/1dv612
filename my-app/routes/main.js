@@ -2,7 +2,8 @@
 
 let router = require('express').Router();
 
-router.route('/')
-    .get(function(req, res) {
-        res.render('layout/index');
-    });
+router.get('/', function (req, res, next) {
+    res.send({ express: 'Heeej' });  
+});
+
+module.exports = router;
