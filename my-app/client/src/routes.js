@@ -1,22 +1,30 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
-import App from './App.js'
-import Notifications from './views/Notifications'
-import Settings from './views/Settings'
+import {Switch} from 'react-router-dom'
+import App from './App';
+import Notifications from './views/Notifications';
+import Settings from './views/Settings';
 
-const Routes = (props) => (
-    <Router {...props}>
+const Routes = () => (
+    <main>
+    <div>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/Notifications">Notifications</Link></li>
+          <li><Link to="/Settings">Settings</Link></li>
+        </ul>
+    </div>
+    <div>
         <div>
-            <ul>
-                <li><Link to="/">HOME</Link></li>
-                <li><Link to="/Notifications">Notfications</Link></li>
-                <li><Link to="/Settings">Settings</Link></li>
-            </ul>
-            <Route exact path="/" component={App}/>
-            <Route exact path="/Notifications" component={Notifications}/>
-            <Route exact path="/Settings" component={Settings}/>
+            <switch>
+                <Route exact path="/" component={App}/>
+                <Route exact path="/Notifications" component={Notifications}/>
+                <Route exact path="/Settings" component={Settings}/>    
+            </switch>     
         </div>
-    </Router>
+    </div>
+    </main>
 )
+
 
 export default Routes;
