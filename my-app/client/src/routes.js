@@ -9,7 +9,7 @@ const Routes = () => (
     <main>
     <div>
         <ul>
-          <li><Link to="/">Home</Link></li>
+          <li><Link to="/dashboard">Home</Link></li>
           <li><Link to="/Notifications">Notifications</Link></li>
           <li><Link to="/Settings">Settings</Link></li>
         </ul>
@@ -17,7 +17,7 @@ const Routes = () => (
     <div>
         <div>
             <switch>
-                <Route exact path="/" component={App}/>
+                <Route exact path="/dashboard" component={App}/>
                 <Route exact path="/Notifications" component={Notifications}/>
                 <Route exact path="/Settings" component={Settings}/>    
             </switch>     
