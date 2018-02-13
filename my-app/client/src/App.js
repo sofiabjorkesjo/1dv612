@@ -11,22 +11,33 @@ class App extends Component {
     response: ''
   };
 
- 
-
   componentDidMount() {
-    this.callApi()
-      .then(res => this.setState({ response: res.express }))
-      .catch(err => console.log(err));
-  }
+    fetch('/main')
+    .then(results => {
+        return results.json();
+    }).then(res => {
+        this.setState({ response: res.express2 })
+    }).catch(err => console.log(err));
+//     this.callApi()
+//       .then(res => this.setState({ response: res.express }))
+//       .catch(err => console.log(err));
+}
 
-  callApi = async function() {
-    const response = await fetch('/main');
-    const body = await response.json();
+  // componentDidMount() {
+  //   this.callApi()
+  //     .then(res => this.setState({ response: res.express2 }))
+  //     .catch(err => console.log(err));
+  // }
 
-    if (response.status !== 200) throw Error(body.message);
+  // callApi = async function() {
+  //   const response = await fetch('/main');
+  //   const body = await response.json();
+  //   console.log(body);
 
-    return body;
-  };
+  //   if (response.status !== 200) throw Error(body.message);
+
+  //   return body;
+  // };
 
 
   render() {

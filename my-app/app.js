@@ -13,6 +13,7 @@ passport.use(new strategy({
   callbackURL: 'http://localhost:3000/dashboard'
 },
 function(accessToken, refreshToken, profile, cb) {
+  console.log('ssss');
   User.findOrCreate({ githubId: profile.id }, function (err, user) {
       return cb(err, user);
   });
