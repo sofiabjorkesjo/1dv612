@@ -50,7 +50,7 @@ class LogIn extends Component {
                 <LogInButton 
                     provider='github'
                     appId='80168115df9ea9d87e1f'
-
+                    gatekeeper='http://localhost:9999'
                     redirect='http://localhost:3000/dashboard'
                     >
                     Login with Facebook
