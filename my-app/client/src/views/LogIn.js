@@ -2,58 +2,58 @@ import React, { Component } from 'react';
 import Redirect from 'react-router-dom';
 import LogInButton from './LogInButton'
 import Settings from './Settings';
-import Notifications from './/Notifications';   
+import Notifications from './Notifications';   
+//import env from '../env';
 
 class LogIn extends Component {
     state = {
         response: ''
       };
-    
       
-     
-    
-    //    componentDidMount() {
-    //     //  fetch('/auth/github')
-    //     //    .then(results => {
-    //     //        console.log(results);
-    //     //    }).catch(err => console.log(err))
-    //     this.callApi()
-        
-    //       .then(res => this.setState({ response: res.express }))
-    //       .catch(err => console.log(err));
-    //    }
-      
-    
-    //   callApi = async function() {
-    //     console.log('oo');
-    //     const response = await fetch('/main/auth/github', {mode: 'no-cors'});
-    //     const body = await response.json();
+    handleSocialLoginIn = (user) => {
+        console.log(user)
+        console.log('ssss')
+    }
 
-    
-    //     if (response.status !== 200) throw Error(body.message);
-    //     // if(response.status == 200) {
-    //     //     console.log('ff');
-    //     //     console.log(response);
-        
-    //     //     return response;
-    //     // }
-    //    return body;
-    //   };
+    test(err) {
+        console.log(err)
+    }
+
+    getInfo = (info) => {
+        console.log(info)
+        console.log('gg')
+        console.log(info.scope)
+    }
+
     render() {
+        console.log(process.env);
+        
+        console.log(process.env.REACT_APP_CLIENT_ID);    
+        console.log('aaaa');
         return (
           <div className="Login">
             <p className="logIn">
                 Logga in
+                {process.env.REACT_APP_CLIENT_ID}
                 {this.state.response}
             </p>
+
+            
             <div>
                 <LogInButton 
                     provider='github'
-                    appId='80168115df9ea9d87e1f'
                     gatekeeper='http://localhost:9999'
-                    redirect='http://localhost:3000/dashboard'
+                    appId='80168115df9ea9d87e1f'
+                    
+                    
+                    onLoginSuccess={this.getInfo}
+                    onLoginFailure={this.test}
+                    redirect='http://localhost:3000/auth/github'
+                    //scope='repo'
+                    
+                    
                     >
-                    Login with Facebook
+                    Login with Github
                 </LogInButton>
             </div>
           </div>
