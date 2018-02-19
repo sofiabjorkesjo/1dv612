@@ -7,6 +7,7 @@ class Settings extends Component {
             <p className="Settings">
                 Settings
             </p>
+            
           </div>
         );
       }
