@@ -18,6 +18,8 @@ class LogIn extends Component {
     };
 
     link = 'https://github.com/login/oauth/authorize/?scope=repo&client_id=' + process.env.REACT_APP_CLIENT_ID;
+    //test = this.props.location.query.code;
+
 
 
     render() {
@@ -31,10 +33,12 @@ class LogIn extends Component {
             </p>
            
             <a href={this.link}>Log in</a>
-        
+    
           </div>
         );
       }
 }
+
+
 
 export default LogIn;

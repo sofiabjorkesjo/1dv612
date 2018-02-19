@@ -4,24 +4,26 @@ import './App.css';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 
 
-class App extends Component {
 
-  //för att de ska kopplas med express på servern 
-  state = {
-    response: ''
-  };
+ class App extends Component {
 
-  componentDidMount() {
-    fetch('/main')
-    .then(results => {
-        return results.json();
-    }).then(res => {
-        this.setState({ response: res.express2 })
-    }).catch(err => console.log(err));
-//     this.callApi()
-//       .then(res => this.setState({ response: res.express }))
-//       .catch(err => console.log(err));
-}
+//   //för att de ska kopplas med express på servern 
+
+//   state = {
+//     response: ''
+//   };
+
+//   componentDidMount() {
+//     // fetch('/main')
+//     // .then(results => {
+//     //     return results.json();
+//     // }).then(res => {
+//     //     this.setState({ response: res.express2 })
+//     // }).catch(err => console.log(err));
+// //     this.callApi()
+// //       .then(res => this.setState({ response: res.express }))
+// //       .catch(err => console.log(err));
+// }
 
   // componentDidMount() {
   //   this.callApi()
@@ -39,17 +41,45 @@ class App extends Component {
   //   return body;
   // };
 
+  getTemporaryCode = () => {
+    const search = this.props.location.search;
+    const code = search.substring(6);
+    console.log(code);
+    return code
+  }
+
+  id = '80168115df9ea9d87e1f&';
+
+
+  //postToGithub = () => {
+  componentDidMount() {
+    console.log('körs nu');
+    //fetch('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&redirect_uri=http://localhost:3000/dashboard&client_secret=a1aafce5111dc000f94b189de7043cfb3e2cc09&code=' + this.getTemporaryCode(), {
+    fetch('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=a1aafce5111dc000f94b189de7043cfb3e2cc09&' + 'code=' + this.getTemporaryCode(), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        //'client_id': '80168115df9ea9d87e1f&',
+        //'redirect_uri': 'http://localhost:3000/dashboard&',
+        //'client_secret': 'a1aafce5111dc000f94b189de7043cfb3e2cc09&',
+        //'code': this.getTemporaryCode()
+      },
+      mode: 'no-cors'
+       
+
+    })
+    .then(response => console.log(response))
+    .catch(error => console.error(error));
+  }
+  
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React Sofia</h1>
-        </header>  
-        <p className="App-intro">
-          {this.state.response}
-        </p>
+       <p>Hej</p>
+       <p className="p"></p>
+       
       </div>
     );
     
