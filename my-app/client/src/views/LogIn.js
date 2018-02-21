@@ -17,7 +17,7 @@ class LogIn extends Component {
         console.log(info.scope)
     };
 
-    link = 'https://github.com/login/oauth/authorize/?scope=repo&client_id=' + process.env.REACT_APP_CLIENT_ID;
+    link = 'https://github.com/login/oauth/authorize/?scope=repo&client_id=80168115df9ea9d87e1f';
     //test = this.props.location.query.code;
 
 
@@ -42,3 +42,4 @@ class LogIn extends Component {
 
 
 export default LogIn;
+
