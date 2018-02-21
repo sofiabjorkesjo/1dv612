@@ -8,25 +8,35 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
  class App extends Component {
 
   state = {
-    response: ''
+    response: 'a'
   };
 
   componentDidMount() {
+    // test = { response: res.express };
+    // console.log('yyuyuyu');
+    // console.log(test);
     this.callApi()
-      .then(res => this.setState({ response: res.express2 }))
+      //.then(res => this.setState({ response: res.express }, console.log(res.express.substring(13, 53)), console.log(res.express)))
+      .then(res => this.setState({response: res.express.substring(13, 53)}))
+     // .then()
+      .then(res => fetch('https://api.github.com/user?access_token=' + this.state.response, {
+         method: 'GET'
+      }))
+      .then(console.log('klaaar'))
+      //.then(fetch('https://api.github.com/user?access_token=' + res.))
       .catch(error => console.error(error));
   }
 
   getTemporaryCode = () => {
     const search = this.props.location.search;
     const code = search.substring(6);
-    console.log(code);
     return code
   }
 
   callApi = async function() {
     const response = await fetch('/main/' + this.getTemporaryCode());
     const body = await response.json();
+    console.log('yo');
     console.log(body);
 
 
@@ -35,36 +45,6 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 
     return body;
   };
-
- 
-
-
-
-
-
-
-  // componentDidMount() {
-  // //   let newheader = new Headers({
-  // //     'Access-Control-Allow-Origin':'*',
-  // //     'Content-Type': 'application/json'
-  // // });
-  //   console.log('körs nu');
-  //   fetch('https://github.com/login/oauth/access_token',{
-  //     method: 'POST',
-  //     body: JSON.stringify({
-  //       client_id: '80168115df9ea9d87e1f',
-  //       redirect_uri: 'http://localhost:3000/dashboard',
-  //       client_secret: '5a1aafce5111dc000f94b189de7043cfb3e2cc09',
-  //       code: this.getTemporaryCode()
-  //     }),
-  //     header: {
-  //       'Content-Type': 'application/json'
-  //     },
-      
-  //   })
-  //   .then(res => console.log(res))
-  //   .catch(error => console.error(error));
-  // }
   
 
   render() {
@@ -73,6 +53,7 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
        <p>Hej</p>
        
        <p className="p">{this.getTemporaryCode()}</p>
+       <p>{this.state.response}</p>
        
       </div>
     );
