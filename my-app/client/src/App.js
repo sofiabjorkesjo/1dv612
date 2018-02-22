@@ -2,29 +2,49 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
-
+import LogIn from './views/LogIn';
+import Settings from './views/Settings';
+import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 
  class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      response: '',
+      name: '',
+      repos_url: ''
+  
+    };
+  }
 
-  state = {
-    response: 'a'
-  };
+  saveResponse(obj) {
+    var name = obj.name;
+    this.getName(name);
+    var repos_url = obj.repos_url
+    this.getReposUrl(repos_url);
+  }
+
+  getName(name) {
+    console.log(name)
+    return name
+  }
+
+  getReposUrl(url) {
+    console.log(url)
+    return url
+  }
 
   componentDidMount() {
-    // test = { response: res.express };
-    // console.log('yyuyuyu');
-    // console.log(test);
+  
     this.callApi()
-      //.then(res => this.setState({ response: res.express }, console.log(res.express.substring(13, 53)), console.log(res.express)))
       .then(res => this.setState({response: res.express.substring(13, 53)}))
-     // .then()
       .then(res => fetch('https://api.github.com/user?access_token=' + this.state.response, {
          method: 'GET'
       }))
-      .then(console.log('klaaar'))
-      //.then(fetch('https://api.github.com/user?access_token=' + res.))
-      .catch(error => console.error(error));
+      .then(res => res.json() )
+      .catch(error => console.error(error))
+      .then(response => this.saveResponse(response))
   }
 
   getTemporaryCode = () => {
@@ -36,7 +56,6 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
   callApi = async function() {
     const response = await fetch('/main/' + this.getTemporaryCode());
     const body = await response.json();
-    console.log('yo');
     console.log(body);
 
 
@@ -45,16 +64,19 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 
     return body;
   };
-  
+
 
   render() {
+    var test = 'dd'
     return (
+      
       <div className="App">
-       <p>Hej</p>
-       
-       <p className="p">{this.getTemporaryCode()}</p>
-       <p>{this.state.response}</p>
-       
+      <p>heej</p>
+
+      <Settings name="sofia"/>
+       <p>You are logged in as {this.state.name}</p>
+       <p>{this.state.repos_url}</p>
+ 
       </div>
     );
     
