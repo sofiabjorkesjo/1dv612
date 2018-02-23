@@ -19,8 +19,6 @@ router.get('/:code', function (req, res, next) {
         if(error) {
             console.log(error)
         } else {
-            console.log('yoooo');
-            console.log(response.body);
             res.send({express: response.body});
         }
     })  

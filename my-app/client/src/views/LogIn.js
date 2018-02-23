@@ -19,7 +19,7 @@ class LogIn extends Component {
     };
 
 
-    link = 'https://github.com/login/oauth/authorize/?scope=repo&client_id=80168115df9ea9d87e1f';
+    link = 'https://github.com/login/oauth/authorize/?scope=repo&user&client_id=80168115df9ea9d87e1f';
     test = process.env.REACT_APP_CLIENT;
     //test = this.props.location.query.code;
 

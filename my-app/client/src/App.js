@@ -10,30 +10,43 @@ import { POINT_CONVERSION_COMPRESSED } from 'constants';
  class App extends Component {
   constructor(props) {
     super(props)
+    //const test = ''
     this.state = {
       response: '',
       name: '',
-      repos_url: ''
+      repos_url: '',
+      orgs: []
   
     };
   }
 
-  saveResponse(obj) {
-    var name = obj.name;
-    this.getName(name);
-    var repos_url = obj.repos_url
-    this.getReposUrl(repos_url);
+  saveName(obj) {
+    this.setState({name: obj.name})
   }
 
-  getName(name) {
-    console.log(name)
-    return name
+  // getReposUrl(url) {
+  //   console.log(url)
+  //   fetch(url, {
+  //     method: 'GET'
+  //   })
+  //   .then(res => this.saveRepos(res))
+  //   .then(console.log('klaraaa'))
+  //   .catch(error => console.log(error))
+  // }
+
+  // saveRepos(obj) {
+  //   console.log('tjo')
+  //   console.log(obj)
+  // }
+
+  saveOrganizations(obj) {
+    let orgs = [];
+    for(let i = 0; i < obj.length; i++) {
+     orgs.push(<p>{obj[i].login}</p>)
+    }
+    this.setState({orgs: orgs})
   }
 
-  getReposUrl(url) {
-    console.log(url)
-    return url
-  }
 
   componentDidMount() {
   
@@ -44,7 +57,15 @@ import { POINT_CONVERSION_COMPRESSED } from 'constants';
       }))
       .then(res => res.json() )
       .catch(error => console.error(error))
-      .then(response => this.saveResponse(response))
+      .then(response => this.saveName(response))
+      .then(res => fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
+        method: 'GET'
+      }))
+      .then(res => res.json())
+      .catch(error => console.log(error))
+      .then(response => this.saveOrganizations(response))
+      //.then(this.setState({org: 'element}'}))
+
   }
 
   getTemporaryCode = () => {
@@ -75,8 +96,7 @@ import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
       <Settings name="sofia"/>
        <p>You are logged in as {this.state.name}</p>
-       <p>{this.state.repos_url}</p>
- 
+       <div>{this.state.orgs}</div>
       </div>
     );
     
