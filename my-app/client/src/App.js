@@ -5,16 +5,22 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 import LogIn from './views/LogIn';
 import Settings from './views/Settings';
 import { POINT_CONVERSION_COMPRESSED } from 'constants';
+import Routes from './Routes'
+import Notifications from './views/Notifications';
+import Links from './views/Links';
+import Dashboard from './views/Dashboard'
+
 
 
  class App extends Component {
   constructor(props) {
+    
     super(props)
-    //const test = ''
+    console.log(this.props)
     this.state = {
       response: '',
+      loggedIn:'mmm',
       name: '',
-      repos_url: '',
       orgs: []
   
     };
@@ -24,79 +30,90 @@ import { POINT_CONVERSION_COMPRESSED } from 'constants';
     this.setState({name: obj.name})
   }
 
-  // getReposUrl(url) {
-  //   console.log(url)
-  //   fetch(url, {
-  //     method: 'GET'
-  //   })
-  //   .then(res => this.saveRepos(res))
-  //   .then(console.log('klaraaa'))
-  //   .catch(error => console.log(error))
-  // }
-
-  // saveRepos(obj) {
-  //   console.log('tjo')
-  //   console.log(obj)
-  // }
-
+ //FIXA
   saveOrganizations(obj) {
-    let orgs = [];
-    for(let i = 0; i < obj.length; i++) {
-     orgs.push(<p>{obj[i].login}</p>)
-    }
-    this.setState({orgs: orgs})
+    //this.setState({orgs: obj})
+    // let orgs = [];
+    // for(let i = 0; i < obj.length; i++) {
+    //  orgs.push(<p>{obj[i].login}</p>)
+    // }
+    // this.setState({orgs: orgs})
   }
 
 
-  componentDidMount() {
+
+
+   componentDidMount() {
   
-    this.callApi()
+     this.callApi()
       .then(res => this.setState({response: res.express.substring(13, 53)}))
-      .then(res => fetch('https://api.github.com/user?access_token=' + this.state.response, {
+      .then(console.log(this.state.response))
+      .then(res => {
+        console.log(this.state.response);
+        return fetch('https://api.github.com/user?access_token=' + this.state.response, {
          method: 'GET'
-      }))
+      })})
       .then(res => res.json() )
       .catch(error => console.error(error))
-      .then(response => this.saveName(response))
-      .then(res => fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
+      .then(res => this.setState({name: res.name}))
+      .then(this.setState({loggedIn: 'true'}))
+      .then(res => {
+        this.setState({loggedIn: 'true'});
+        return fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
         method: 'GET'
-      }))
+      })})
       .then(res => res.json())
       .catch(error => console.log(error))
       .then(response => this.saveOrganizations(response))
-      //.then(this.setState({org: 'element}'}))
 
-  }
+
+      
+   }
 
   getTemporaryCode = () => {
-    const search = this.props.location.search;
+    const search = window.location.search;
     const code = search.substring(6);
-    return code
+    return code 
   }
 
   callApi = async function() {
+    this.getTemporaryCode()
     const response = await fetch('/main/' + this.getTemporaryCode());
     const body = await response.json();
     console.log(body);
-
-
 
     if (response.status !== 200) throw Error(body.message);
 
     return body;
   };
 
-
+  
+  
   render() {
-    var test = 'dd'
+    const test= 'jooo';
     return (
       
       <div className="App">
-      <p>heej</p>
-
-      <Settings name="sofia"/>
-       <p>You are logged in as {this.state.name}</p>
-       <div>{this.state.orgs}</div>
+       <main>
+    <div>
+        <ul>
+          <li><Link to="/login">Logga in</Link></li>
+          <li><Link to="/dashboard">Home</Link></li>
+          <li><Link to="/Settings">Settings</Link></li>
+          
+        </ul>
+    </div>
+    <div>
+        <div>
+            <switch>
+                <Route path="/login" component={LogIn}/>
+                <Route path="/dashboard" render={()=><Dashboard orgs={this.state.orgs} info={"HEEEEEJ"} loggedIn={this.state.loggedIn} name={this.state.name}/>}/>
+                <Route path="/Settings" component={Settings}/>    
+            </switch>     
+        </div>
+        <p>{this.state.name}</p>
+    </div>
+    </main>
       </div>
     );
     
