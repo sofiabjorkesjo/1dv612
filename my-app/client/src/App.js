@@ -15,47 +15,62 @@ import Dashboard from './views/Dashboard'
     super(props)
 
     this.state = {
-
-  
+      loggedIn: 'false'  
     };
   }
 
-
-  
-
-   componentDidMount() {
-
+   changeState() {
+     this.setState({loggedIn: 'true'})
    }
 
   link = 'https://github.com/login/oauth/authorize/?scope=repo&user&client_id=80168115df9ea9d87e1f';
   
   render() {
-    return (   
-      <div className="App">
-       <main>
-    <div>
-        <ul>
-
-          <li><Link to="/dashboard">Home</Link></li>
-          <li><Link to="/Settings">Settings</Link></li>
-          
-        </ul>
-    </div>
-    <div>
+      if(this.state.loggedIn === 'false') {
+        return (   
+          <div className="App">
+           <main>
         <div>
-            <switch>
-                <a href={this.link}>Log in</a> 
-                
-                <Route path="/dashboard" render={()=><Dashboard orgs={this.state.orgs} info={"HEEEEEJ"} loggedIn={this.state.loggedIn} name={this.state.name}/>}/>
-                <Route path="/Settings" render={()=><Settings orgs={this.state.orgs}/>}/>    
-            </switch>     
         </div>
-    </div>
-    </main>
-      </div>
-    );
+        <div>
+            <div>
+                <switch>
+                <a href={this.link}>Log in</a>                   
+                    <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)}/>}/>
+                    <Route path="/Settings" render={()=><Settings />}/>    
+                </switch>     
+            </div>
+            <p>{this.state.loggedIn}</p>
+        </div>
+        </main>
+          </div>
+         );
+      } else {
+        return (   
+          <div className="App">
+           <main>
+        <div>
+            <ul>
     
-  }
+              <li><Link to="/dashboard">Home</Link></li>
+              <li><Link to="/Settings">Settings</Link></li>
+              
+            </ul>
+        </div>
+        <div>
+            <div>
+                <switch>
+                    <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)}/>}/>
+                    <Route path="/Settings" render={()=><Settings />}/>    
+                </switch>     
+            </div>
+            <p>{this.state.loggedIn}</p>
+        </div>
+        </main>
+          </div>
+         );
+      }
+   }
   
 }
 

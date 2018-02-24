@@ -8,6 +8,7 @@ class Dashboard extends Component {
       response: '',
       name: '',
       orgs: []
+      
     }    
   }
 
@@ -25,6 +26,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() { 
+    this.props.routes()
     this.callApi()
     .then(res => this.setState({response: res.express.substring(13, 53)}))
     .then(res => {
@@ -33,7 +35,9 @@ class Dashboard extends Component {
     })})
     .then(res => res.json() )
     .catch(error => console.error(error))
+    .then(console.log('dddddd'))
     .then(res => this.setState({name: res.name}))
+
     .then(res => {
       return fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
       method: 'GET'
@@ -69,6 +73,7 @@ class Dashboard extends Component {
           <p>Dina organsationer är: </p>
           {this.state.orgs}
         </div>
+ 
       </div>
         );
       }   

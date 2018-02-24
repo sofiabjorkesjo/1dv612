@@ -10,12 +10,13 @@ class LogIn extends Component {
 
     link = 'https://github.com/login/oauth/authorize/?scope=repo&user&client_id=80168115df9ea9d87e1f';
 
+    componentDidMount() {
+      //this.props.view()
+    }
+
+    
     render(props) {
-      if(this.props.loggedIn == false) {
-        console.log('false');
-      } else {
-        console.log('true');
-      }
+      
         return (
           <div className="Login">
             <p className="logIn">
