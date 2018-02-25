@@ -26,36 +26,37 @@ import Dashboard from './views/Dashboard'
   link = 'https://github.com/login/oauth/authorize/?scope=repo&user&client_id=80168115df9ea9d87e1f';
   
   render() {
-      if(this.state.loggedIn === 'false') {
+    //   if(this.state.loggedIn === 'false') {
+    //     return (   
+    //       <div className="App">
+    //        <main>
+    //     <div>
+    //     </div>
+    //     <div>
+    //         <div>
+    //             <switch>
+    //             <a href={this.link}>Log in</a>                   
+    //                 <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)}/>}/>
+    //                 <Route path="/Settings" render={()=><Settings />}/>    
+    //             </switch>     
+    //         </div>
+    //         <p>{this.state.loggedIn}</p>
+    //     </div>
+    //     </main>
+    //       </div>
+    //      );
+    //   } else {
         return (   
           <div className="App">
            <main>
-        <div>
-        </div>
         <div>
             <div>
-                <switch>
-                <a href={this.link}>Log in</a>                   
-                    <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)}/>}/>
-                    <Route path="/Settings" render={()=><Settings />}/>    
-                </switch>     
+                <a href={this.link}>Log in</a> 
             </div>
-            <p>{this.state.loggedIn}</p>
-        </div>
-        </main>
-          </div>
-         );
-      } else {
-        return (   
-          <div className="App">
-           <main>
-        <div>
-            <ul>
-    
+            <div>
               <li><Link to="/dashboard">Home</Link></li>
-              <li><Link to="/Settings">Settings</Link></li>
-              
-            </ul>
+              <li><Link to="/Settings">Settings</Link></li>     
+            </div>
         </div>
         <div>
             <div>
@@ -70,7 +71,7 @@ import Dashboard from './views/Dashboard'
           </div>
          );
       }
-   }
+  // }
   
 }
 

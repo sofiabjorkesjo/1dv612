@@ -26,6 +26,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() { 
+
     this.props.routes()
     this.callApi()
     .then(res => this.setState({response: res.express.substring(13, 53)}))
@@ -35,7 +36,6 @@ class Dashboard extends Component {
     })})
     .then(res => res.json() )
     .catch(error => console.error(error))
-    .then(console.log('dddddd'))
     .then(res => this.setState({name: res.name}))
 
     .then(res => {
