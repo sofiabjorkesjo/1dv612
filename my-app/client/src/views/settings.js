@@ -4,7 +4,34 @@ import { RadioGroup, RadioButton } from 'react-radio-buttons';
 
 class Settings extends Component {
   constructor(props) {
-    super(props)    
+    super(props)
+    this.state = {
+      orgs: []
+    }    
+  }
+
+  testar() {
+
+    var organisations = localStorage.getItem('organisationer');
+    var parsedOrgs = JSON.parse(organisations);
+    var orgsArray = [];
+    for(let i = 0; i < parsedOrgs.length; i++) {
+      orgsArray.push(<RadioButton key={[i]}value={parsedOrgs[i]}>
+      {parsedOrgs[i]}
+      </RadioButton>)
+    }
+    return orgsArray
+  }
+
+  componentDidMount() {
+    var organisations = localStorage.getItem('organisationer');
+    var parsedOrgs = JSON.parse(organisations);
+    var orgsArray = [];
+    for(let i = 0; i < parsedOrgs.length; i++) {
+      orgsArray.push(<p key={i}>{parsedOrgs[i]}</p>)
+     
+    }
+    this.setState({orgs: orgsArray})
   }
 
   // listOrganisations(orgs) {
@@ -49,32 +76,14 @@ class Settings extends Component {
       <div className="SettingsDiv">
         <h2>Settings</h2>
         <p>Choose organisations to listen to</p>
+        {this.state.orgs}
+        
         <div className="radioInputs">
-        {/* <RadioGroup onChange={ this.onChange } vertical="true">
-          <RadioButton value="apple">
-            Apple
-          </RadioButton>
-          <RadioButton value="orange">
-            Orange
-          </RadioButton>
-          <RadioButton value="melon">
-            Melon
-          </RadioButton>
-        </RadioGroup> */}
+        <RadioGroup onChange={ this.onChange } vertical="true">
+        {this.testar()}
+        
+        </RadioGroup>
         </div>
-        {/* <form>
-          <div className="Radio">
-          <label>
-            <input type="radio" value="test1" checked={this.state.selectedOption === 'test1'} onChange={this.handleOptionChange}/>
-              Test 1
-          </label>
-          <label>
-            <input type="radio" value="test2" checked={this.state.selectedOption === 'test2'} onChange={this.handleOptionChange}/>
-              Test 2
-          </label> 
-          </div>
-        </form> */}
-        <div>{this.props.orgs}</div> 
       </div>
         );
       }    

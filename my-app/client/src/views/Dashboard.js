@@ -22,7 +22,6 @@ class Dashboard extends Component {
         orgsLocalStorage.push(obj[i].login)
       }
       this.setState({orgs: orgs})
-      //var organisations = this.state.orgs
       localStorage.setItem('organisationer', JSON.stringify(orgsLocalStorage))
     }
   }
@@ -39,9 +38,6 @@ class Dashboard extends Component {
 
   saveName(name) {
     this.setState({name: name})
-    // this.setState((prevState) => {
-    //   return {name: prevState}
-    // })
   }
 
   
