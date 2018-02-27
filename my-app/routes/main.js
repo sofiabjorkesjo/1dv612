@@ -8,7 +8,6 @@ let env = require('env2')('.env');
 
 router.get('/:code', function (req, res, next) {
     let temporaryCode = req.url.substring(1);
-    console.log(temporaryCode);
    
     request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
         method: 'POST',
@@ -21,8 +20,20 @@ router.get('/:code', function (req, res, next) {
         } else {
             res.send({express: response.body});
         }
-    })  
- }); 
+    })
+    
+    
+    
+ });
+
+ router.post('/dashboard', function(req, res) {
+     console.log('heeeeeejj!!')
+     console.log(req.body);
+     console.log(req.url)
+     res.send('hej från express' + req.body);
+ })
+ 
+ 
 
 
 module.exports = router;

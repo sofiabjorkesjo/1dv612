@@ -16,6 +16,16 @@ class Settings extends Component {
   //     </label>
   //   });
   // }
+  // componentDidMount() { 
+  //     fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
+  //     method: 'GET'
+  //   })
+  //   .then(res => res.json())
+  //   .catch(error => console.log(error))
+  //   .then(response => console.log(response))
+  //   //.then(response => this.saveOrganizations(response))
+  // }
+
 
 
   // getInitialState () {
@@ -39,7 +49,8 @@ class Settings extends Component {
       <div className="SettingsDiv">
         <h2>Settings</h2>
         <p>Choose organisations to listen to</p>
-        <RadioGroup onChange={ this.onChange } vertical="true">
+        <div className="radioInputs">
+        {/* <RadioGroup onChange={ this.onChange } vertical="true">
           <RadioButton value="apple">
             Apple
           </RadioButton>
@@ -49,7 +60,8 @@ class Settings extends Component {
           <RadioButton value="melon">
             Melon
           </RadioButton>
-        </RadioGroup>
+        </RadioGroup> */}
+        </div>
         {/* <form>
           <div className="Radio">
           <label>

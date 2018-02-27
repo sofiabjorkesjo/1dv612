@@ -7,8 +7,11 @@ const bodyParser = require('body-parser');
 //let env = require('env2')('.env');
 const port = process.env.PORT || 5000;
 
-app.use('/main', main);
+
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use('/main', main);
 app.use(cors());
 
 let server = http.createServer(app).listen(port, function() {

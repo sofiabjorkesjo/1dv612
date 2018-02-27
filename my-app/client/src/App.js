@@ -15,7 +15,8 @@ import Dashboard from './views/Dashboard'
     super(props)
 
     this.state = {
-      loggedIn: 'false'  
+      loggedIn: 'false',
+      fromChild: null  
     };
   }
 
@@ -23,9 +24,14 @@ import Dashboard from './views/Dashboard'
      this.setState({loggedIn: 'true'})
    }
 
+   callback = (dataFromChild) => {
+    this.setState({fromChild: dataFromChild})
+   }
+
   link = 'https://github.com/login/oauth/authorize/?scope=repo&user&client_id=80168115df9ea9d87e1f';
   
   render() {
+    console.log(this.state.fromChild)
     //   if(this.state.loggedIn === 'false') {
     //     return (   
     //       <div className="App">
@@ -61,11 +67,12 @@ import Dashboard from './views/Dashboard'
         <div>
             <div>
                 <switch>
-                    <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)}/>}/>
+                    <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)} callbackFromParent={this.callback}/>}/>
                     <Route path="/Settings" render={()=><Settings />}/>    
                 </switch>     
             </div>
             <p>{this.state.loggedIn}</p>
+            <p>{this.state.fromChild}</p>
         </div>
         </main>
           </div>
