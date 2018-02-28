@@ -11,7 +11,7 @@ class Settings extends Component {
       orgs: [],
       disabled: false
     }
-
+    this.checkedBoxes = [];
   }
 
 
@@ -22,12 +22,14 @@ class Settings extends Component {
     var orgsArray = [];
     for(let i = 0; i < parsedOrgs.length; i++) {
 
-      orgsArray.push(<p>
+      orgsArray.push(<p key={i}>
         <label>
-            <Checkbox
-              defaultChecked
-              onChange={this.onChange}
+            <Checkbox 
+              //ref={(input) => { this.textInput = input; }}
+              ref = "test"
+              onChange={this.onChange.bind(this)}
               disabled={this.state.disabled}
+              name={parsedOrgs[i]}
             />
             {parsedOrgs[i]}
           </label>
@@ -48,18 +50,52 @@ class Settings extends Component {
   }
 
   onChange(e) {
-    console.log('Checkbox checked:', (e.target.checked));
+    if(e.target.checked == true) {
+      if(this.checkedBoxes.includes(e.target.name)) {
+        console.log('finns')
+      } else {
+        this.checkedBoxes.push(e.target.name)
+        console.log('inte')
+      }   
+    }
+
+    if(e.target.checked == false) {
+      if(this.checkedBoxes.includes(e.target.name)) {
+        for(let i = 0; i < this.checkedBoxes.length; i++) {
+          if(this.checkedBoxes[i] == e.target.name) {
+            this.checkedBoxes.splice([i], 1)
+          }
+        }
+      }
+    }
   }
 
-  save() {
+  save(event) {
+    event.preventDefault();
+    // console.log(this.refs.test)
+    console.log(this.checkedBoxes);
     console.log('spara')
+    
+    // console.log(event.target);
+    // console.log(event.checked);
+    // console.log(event.value)
+    // event.preventDefault();
   }
 
   render(props) {
+    
     return (
+      <main>
       <div>
-        {this.renderOrganisations()}    
+        <form onSubmit={this.save.bind(this)}>
+        {this.renderOrganisations()}  
+        <input type="Submit" value="submit"/>
+        {/* <button onClick={this.save()}>spara</button> */}
+        </form>
       </div>
+      <div>
+      </div>
+      </main>
         );
       }    
 }
