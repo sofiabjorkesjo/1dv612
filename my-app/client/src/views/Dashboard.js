@@ -15,8 +15,6 @@ class Dashboard extends Component {
   }
 
 
-
-
   saveOrganizations(obj) {
     if(obj) {
       let orgs = [];
@@ -58,9 +56,6 @@ class Dashboard extends Component {
       this.setState({name: username})
       this.getOrganizations() 
       this.postUserToServer()
-      //this.getDashboard()
-     // this.test()
-      //this.callApiIgen()
       
     } else {
       this.toParent()
@@ -90,7 +85,7 @@ class Dashboard extends Component {
       .then(res => res.json())
       .catch(error => console.log(error))
       .then(response => this.saveOrganizations(response)) 
-      .then(this.postUserToServer())
+      //.then(this.postUserToServer())
     
 
 
@@ -132,10 +127,11 @@ class Dashboard extends Component {
         'Content-Type': 'application/json'
       })
     })
-    //.then(res => console.log(res))
+    .then(console.log('postat till server'))
     .then(res => res.json())
     .catch(error => console.error('Error:', error))
-    .then(response => console.log('Success:', response));
+    .then(response => this.setState({orgs: response.orgs}))
+   // .then(res => this.setState({orgs: res.orgs}))
   }
 
   render(props) {
@@ -150,7 +146,7 @@ class Dashboard extends Component {
       <div className="SettingsDiv">
         <p>You are logged in as {this.state.name}</p>
         <div>
-          <p>Dina organsationer är: </p>
+          <p>Dina valda organsationer är: </p>
           {this.state.orgs}
         </div>
  

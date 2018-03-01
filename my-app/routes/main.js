@@ -9,12 +9,6 @@ let env = require('env2')('.env');
 
 let username;
 
-// router.get('/dashboard', function(req, res) {
-//     console.log('HALLÅ')
-//     console.log(username)
-//     //orgsSchema.findOne({username: })
-// })
-
 router.get('/:code', function (req, res, next) {
     let temporaryCode = req.url.substring(1);
     console.log('aaaa')
@@ -35,27 +29,38 @@ router.get('/:code', function (req, res, next) {
  });
 
 
-
  router.post('/settings', function(req, res) {
-    console.log('heeeeeejj!!')
-    console.log(req.body.username);
-    let userAndOrgs = new orgsSchema({
-        username: req.body.username,
-        organisations: req.body.data
-    });
-    userAndOrgs.save(function(err, result) {
-        if(err) {
-            console.log(err)
-        } else {
-            res.send({'express': 'Successfull saved to database'});
-        }
-    })   
+    username = req.body.username
+    if(req.body.data === undefined) {
+        res.send({'message': 'inget att spara'})
+    } else {
+        orgsSchema.findOneAndUpdate({'username': username},
+        {username: req.body.username,
+         organisations: req.body.data},
+         {new: true},
+        function(err, user) {
+            if(err) {
+                res.send(err)
+            } else {
+                console.log(user)
+                if(user == null) {
+                    let userAndOrgs = new orgsSchema({
+                        username: req.body.username,
+                        organisations: req.body.data
+                    });
+                    userAndOrgs.save(function(err, result) {
+                        if(err) {
+                            console.log(err)
+                        } else {
+                            res.send({'express': 'Successfull saved to database'});
+                        }
+                    }) 
+                }
+            }
+        })
+    }     
 })
 
-// router.post('/:code', function(req, res) {
-//     console.log('HAAAAAAAAAAAAAA!!!')
-//     console.log(req.body.name);
-// })
 
  router.post('/dashboard', function(req, res) {
     console.log('heeeeeejj!!????')
@@ -66,21 +71,16 @@ router.get('/:code', function (req, res, next) {
         if(err) {
             console.log(err)
         } else {
-            console.log('naaajsjsj');
             console.log(user)
         }
         let result = {
             'orgs': user.organisations,
             'user': user.username
         }
+        console.log(result)
         res.send(result)
     })
 
-    //res.send('hej från express' + req.body);
  });
-
- 
- 
-
 
 module.exports = router;
