@@ -72,15 +72,29 @@ class Settings extends Component {
 
   save(event) {
     event.preventDefault();
-    // console.log(this.refs.test)
     console.log(this.checkedBoxes);
     console.log('spara')
-    
-    // console.log(event.target);
-    // console.log(event.checked);
-    // console.log(event.value)
-    // event.preventDefault();
+    this.sendToServer(this.checkedBoxes)
   }
+
+  sendToServer = function(data) {
+
+    var url = '/main/settings';
+    console.log('asasas');
+    console.log(data);
+    var username = localStorage.getItem('username');
+    var obj = {'data': data, 'username': username}
+
+    return fetch(url, {
+      method: 'POST', 
+      body: JSON.stringify(obj) , 
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    }).then(res => res.json())
+    .catch(error => console.error('Error:', error))
+    .then(response => console.log('Success:', response));
+  };
 
   render(props) {
     
@@ -90,7 +104,6 @@ class Settings extends Component {
         <form onSubmit={this.save.bind(this)}>
         {this.renderOrganisations()}  
         <input type="Submit" value="submit"/>
-        {/* <button onClick={this.save()}>spara</button> */}
         </form>
       </div>
       <div>
