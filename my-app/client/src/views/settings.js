@@ -14,6 +14,23 @@ class Settings extends Component {
     this.checkedBoxes = [];
   }
 
+  sendUserToServer() {
+    var username = localStorage.getItem('username');
+    var url = '/main/settings';
+    console.log('tttt');
+    var obj = {'username': username}
+
+    return fetch(url, {
+      method: 'POST', 
+      body: JSON.stringify(obj) , 
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    }).then(res => res.json())
+    .catch(error => console.error('Error:', error))
+    .then(response => console.log('Success:', response));
+  }
+
 
   renderOrganisations() {
 
@@ -39,6 +56,7 @@ class Settings extends Component {
   }
 
   componentDidMount() {
+    this.sendUserToServer()
     var organisations = localStorage.getItem('organisationer');
     var parsedOrgs = JSON.parse(organisations);
     var orgsArray = [];

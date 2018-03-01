@@ -7,8 +7,18 @@ let orgsSchema = require('../models/organisations');
 let env = require('env2')('.env');
 
 
+let username;
+
+// router.get('/dashboard', function(req, res) {
+//     console.log('HALLÅ')
+//     console.log(username)
+//     //orgsSchema.findOne({username: })
+// })
+
 router.get('/:code', function (req, res, next) {
     let temporaryCode = req.url.substring(1);
+    console.log('aaaa')
+    console.log(username)
    
     request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
         method: 'POST',
@@ -24,6 +34,8 @@ router.get('/:code', function (req, res, next) {
     })
  });
 
+
+
  router.post('/settings', function(req, res) {
     console.log('heeeeeejj!!')
     console.log(req.body.username);
@@ -37,17 +49,36 @@ router.get('/:code', function (req, res, next) {
         } else {
             res.send({'express': 'Successfull saved to database'});
         }
-    })
-   
-    
+    })   
 })
 
+// router.post('/:code', function(req, res) {
+//     console.log('HAAAAAAAAAAAAAA!!!')
+//     console.log(req.body.name);
+// })
 
  router.post('/dashboard', function(req, res) {
     console.log('heeeeeejj!!????')
-    console.log(req.body);
-     res.send('hej från express' + req.body);
- })
+    console.log(req.body.username);
+    username = req.body.username;
+
+    orgsSchema.findOne({'username': username}, function(err, user) {
+        if(err) {
+            console.log(err)
+        } else {
+            console.log('naaajsjsj');
+            console.log(user)
+        }
+        let result = {
+            'orgs': user.organisations,
+            'user': user.username
+        }
+        res.send(result)
+    })
+
+    //res.send('hej från express' + req.body);
+ });
+
  
  
 

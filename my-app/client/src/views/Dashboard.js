@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Redirect} from 'react-router';
 import Links from './Links';
 
 class Dashboard extends Component {  
@@ -9,10 +10,13 @@ class Dashboard extends Component {
       name: 'yoyooo',
       orgs: []
       
-    }    
+    }
+
   }
 
-  
+
+
+
   saveOrganizations(obj) {
     if(obj) {
       let orgs = [];
@@ -38,12 +42,9 @@ class Dashboard extends Component {
 
   saveName(name) {
     this.setState({name: name})
+
   }
 
-  
-  testar(props) {
-    return props.name
-  }
 
   toParent = () => {
     var info = 'hehehheheejjjjj'
@@ -56,6 +57,10 @@ class Dashboard extends Component {
       var username = localStorage.getItem('username')
       this.setState({name: username})
       this.getOrganizations() 
+      this.postUserToServer()
+      //this.getDashboard()
+     // this.test()
+      //this.callApiIgen()
       
     } else {
       this.toParent()
@@ -73,8 +78,10 @@ class Dashboard extends Component {
       .then(res => {
         return localStorage.setItem('username', this.state.name)
       })
+      .then(console.log(localStorage.getItem('username')))
       //.then(this.test())
       .then(console.log('klaaar!!'))
+      
 
       .then(res => {
         return fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
@@ -83,6 +90,9 @@ class Dashboard extends Component {
       .then(res => res.json())
       .catch(error => console.log(error))
       .then(response => this.saveOrganizations(response)) 
+      .then(this.postUserToServer())
+    
+
 
     }
     
@@ -106,28 +116,36 @@ class Dashboard extends Component {
     }
     return body;
   };
+  
+  
 
-  test = function() {
-
+  postUserToServer() {
+    var username = localStorage.getItem('username');
     var url = '/main/dashboard';
-    console.log('asasas');
-    console.log(this.state.name)
-    var name = this.state.name;
-    var data = {name: 'name'};
-    
+    console.log('tttt');
+    var obj = {'username': username}
+
     return fetch(url, {
       method: 'POST', 
-      body: JSON.stringify({name: 'this.state.name'}), 
+      body: JSON.stringify(obj) , 
       headers: new Headers({
         'Content-Type': 'application/json'
       })
-    }).then(res => res.json())
+    })
+    //.then(res => console.log(res))
+    .then(res => res.json())
     .catch(error => console.error('Error:', error))
     .then(response => console.log('Success:', response));
-  };
+  }
 
   render(props) {
-    console.log(this.state.response)
+    // let currentURL = window.location.search;
+    // console.log(currentURL)
+    // if(currentURL) {
+    //   <Redirect to="/dashboard"/>
+    // }
+
+
     return (
       <div className="SettingsDiv">
         <p>You are logged in as {this.state.name}</p>
