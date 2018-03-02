@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import {Redirect} from 'react-router';
 import Links from './Links';
+import io from "socket.io-client";
 
 class Dashboard extends Component {  
   constructor(props) {
     super(props)
     this.state = {
       response: '',
-      name: 'yoyooo',
-      orgs: []
+      name: '',
+      orgs: [],
+      socket: '',
+      data: ''
       
     }
 
@@ -17,13 +20,15 @@ class Dashboard extends Component {
 
   saveOrganizations(obj) {
     if(obj) {
+      console.log('aaasdaada')
+      console.log(obj)
       let orgs = [];
       let orgsLocalStorage = [];
       for(let i = 0; i < obj.length; i++) {
         orgs.push(<p key={i}>{obj[i].login}</p>)
         orgsLocalStorage.push(obj[i].login)
       }
-      this.setState({orgs: orgs})
+      //this.setState({orgs: orgs})
       localStorage.setItem('organisationer', JSON.stringify(orgsLocalStorage))
     }
   }
@@ -35,7 +40,7 @@ class Dashboard extends Component {
     for(let i = 0; i < parsedOrganisations.length; i++) {
       orgsArray.push(<p key={i}>{parsedOrganisations[i]}</p>)
     }
-    this.setState({orgs: orgsArray})
+    //this.setState({orgs: orgsArray})
   }
 
   saveName(name) {
@@ -45,12 +50,31 @@ class Dashboard extends Component {
 
 
   toParent = () => {
-    var info = 'hehehheheejjjjj'
+    var info = this.theTemporaryCode()
 
     this.props.callbackFromParent(info);
   }
 
+  reloadPage() {
+    var test = ['test']
+    for(let i = 0; i < test.length; i++) {
+      console.log('HEEEEJ!!!')
+     // window.location.reload()
+      break;
+    }
+  }
+
   componentDidMount() {
+    let socket = io();
+
+
+socket.on('message', function (data) {
+    console.log(data)
+});
+    this.reloadPage() 
+    if(window.location.search == this.theTemporaryCode()) {
+      console.log('AAAAA')
+    }
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
       this.setState({name: username})
@@ -93,10 +117,13 @@ class Dashboard extends Component {
     
   }
 
-
+  theTemporaryCode() {
+    const search = window.location.search;
+    return search
+  }
 
   getTemporaryCode = () => {
-    console.log(window.location.href);
+    console.log(window.location.search);
     const search = window.location.search;
     const code = search.substring(6);
     return code 
@@ -130,9 +157,65 @@ class Dashboard extends Component {
     .then(console.log('postat till server'))
     .then(res => res.json())
     .catch(error => console.error('Error:', error))
-    .then(response => this.setState({orgs: response.orgs}))
+    .then(response => this.setOrganisations(response.orgs))
+    //.then(this.testWebhook())
+    .then(console.log('QQQQQ'))
+   // .then(response => this.setState({orgs: response.orgs}))
    // .then(res => this.setState({orgs: res.orgs}))
   }
+
+  setOrganisations(orgs) {
+    console.log('test orgs')
+    console.log(orgs)
+    var organisations = [];
+    for(let i = 0; i < orgs.length; i++) {
+      organisations.push(<p key={i}>{orgs[i]}</p>)
+    }
+
+    this.setState({orgs: organisations})
+  }
+
+  testWebhook() {
+
+    return fetch('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
+      body: JSON.stringify({
+        "name": "web",
+          "config": {
+            "url": "http://localhost:8000/webhook",
+            "content_type": "application/json"
+          }
+      }),
+      headers:  {
+          'Accept': 'application/json',
+          'User-Agent': 'sofiasorganisationtest'
+      },
+      method: 'POST'
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+  //   let options = {
+  //     url: 'https://api.github.com/orgs/sofiasorganisationtest/hooks',
+  //     method: 'POST',
+  //     headers: {
+  //         'Accept': 'application/json',
+  //         'User-Agent': 'sofiabjorkesjo'
+  //     },
+  //     body: JSON.stringify({
+  //         "name": "web",
+  //         "config": {
+  //           "url": "http://localhost:8000/webhook",
+  //           "content_type": "application/json"
+  //         }
+  //     })
+  // }
+  //   return fetch(options)
+  //  // .then(res => res.json())
+  //   .catch(err => console.log(err))
+  //   .then(response => console.log(response))
+  //   .then(console.log('PPPPP'))
+  }
+
+
 
   render(props) {
     // let currentURL = window.location.search;

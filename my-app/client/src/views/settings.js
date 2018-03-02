@@ -65,6 +65,8 @@ class Settings extends Component {
      
     }
     this.setState({orgs: orgsArray})
+    //this.hooks()
+
   }
 
   onChange(e) {
@@ -86,6 +88,32 @@ class Settings extends Component {
         }
       }
     }
+  }
+
+  hooks() {
+    return fetch('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
+    
+      body: JSON.stringify  ({
+        "name": "web",
+        "active": true,
+        "events": [
+          "push",
+          "pull_request"
+        ],
+        "config": {
+          "url": "http://localhost:8000/webhook",
+          "content_type": "application/json"
+        }
+      }),
+      headers: {
+        'user-agent': 'sofiabjorkesjo',
+        "content_type": "application/json"
+    },
+    method: 'POST', 
+    
+    }).then(res => res.json())
+    .catch(err => console.log(err))
+    .then(response => console.log(response.body))
   }
 
   save(event) {
@@ -121,7 +149,7 @@ class Settings extends Component {
       <div>
         <form onSubmit={this.save.bind(this)}>
         {this.renderOrganisations()}  
-        <input type="Submit" value="submit"/>
+        <input type="Submit" value="submit" readOnly/>
         </form>
       </div>
       <div>

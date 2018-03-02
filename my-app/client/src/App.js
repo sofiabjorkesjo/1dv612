@@ -6,6 +6,7 @@ import LogIn from './views/LogIn';
 import Settings from './views/Settings';
 import { POINT_CONVERSION_COMPRESSED } from 'constants';
 import Dashboard from './views/Dashboard'
+import {Redirect} from 'react-router';
 
 
 
@@ -16,9 +17,13 @@ import Dashboard from './views/Dashboard'
 
     this.state = {
       loggedIn: 'false',
-      fromChild: null  
+      fromChild: ''  
     };
+
+    
   }
+
+  
 
    changeState() {
      this.setState({loggedIn: 'true'})
@@ -28,7 +33,7 @@ import Dashboard from './views/Dashboard'
     this.setState({fromChild: dataFromChild})
    }
 
-  link = 'https://github.com/login/oauth/authorize/?scope=repo&user&client_id=80168115df9ea9d87e1f';
+  link = 'https://github.com/login/oauth/authorize/?scope=admin:org&repo&user&client_id=80168115df9ea9d87e1f';
   
   render() {
     console.log(this.state.fromChild)
@@ -68,6 +73,7 @@ import Dashboard from './views/Dashboard'
             <div>
                 <switch>
                     <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)} callbackFromParent={this.callback}/>}/>
+                   
                     <Route path="/Settings" render={()=><Settings />}/>    
                 </switch>     
             </div>

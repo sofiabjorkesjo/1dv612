@@ -12,21 +12,22 @@ database();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use('/main', main);
-app.use(cors());
-
 let server = http.createServer(app).listen(port, function() {
   console.log('Started on ' + port);
 });
 
 let socket = require('socket.io')(server);
+app.use('/main', main);
+app.use(cors());
+
 
 socket.on('connection', function() {
-  console.log('hhh');
- // socket.emit('message', 'You are connected to sockets');
- // socket.on('disconnected', function () {
-   //   console.log('disconnected socket');
- // });
+  console.log('socket connection');
+  socket.emit('message', 'hej')
+ //socket.emit('message', 'You are connected to sockets');
+ socket.on('disconnected', function () {
+     console.log('disconnected socket');
+ });
 });
 
 
