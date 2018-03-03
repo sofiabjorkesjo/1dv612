@@ -13,9 +13,19 @@ let access_token;
 let username;
 let savedOrgs = []
 
+router.get('/webhook', function(req, res) {
+    res.send({'hej': 'hej'})
+
+})
+router.post('/webhook', function(req, res) {
+    console.log('TESTAR')
+    console.log(req.body)
+})
+
+
+
 router.get('/:code', function (req, res, next) {
     let temporaryCode = req.url.substring(1);
-    console.log(username)   
    
     request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
         method: 'POST',
@@ -24,7 +34,7 @@ router.get('/:code', function (req, res, next) {
          },
     }, function(error, response) {
         if(error) {
-            console.log(error)
+            res.send(error)
         } else {
             access_token = response.body
             res.send({express: response.body});
@@ -42,6 +52,7 @@ router.get('/:code', function (req, res, next) {
         orgsArray.forEach(element => {
             savedOrgs.push(element);
         });
+        createWebhook()
         orgsSchema.findOneAndUpdate({'username': username},
         {username: req.body.username,
          organisations: req.body.data},
@@ -50,7 +61,6 @@ router.get('/:code', function (req, res, next) {
             if(err) {
                 res.send(err)
             } else {
-                console.log(user)
                 if(user == null) {
                     let orgsArray = req.body.data;
                     orgsArray.forEach(element => {
@@ -62,9 +72,9 @@ router.get('/:code', function (req, res, next) {
                     });
                     userAndOrgs.save(function(err, result) {
                         if(err) {
-                            console.log(err)
+                            res.send(err)
                         } else {
-                            createWebhook()
+                           // createWebhook()
                             res.send({'express': 'Successfull saved to database'});
                         }
                     }) 
@@ -90,9 +100,7 @@ function getHooks(){
 }
 
 function createWebhook() {
-    console.log(access_token)
     let newAccessToken = access_token.substring(13, 53)
-    console.log(newAccessToken)
     let options = {
         method: 'POST',
         headers: {
@@ -102,8 +110,12 @@ function createWebhook() {
         body: JSON.stringify({
             'name': 'web',
             'active': true,
+            "events": [
+                "push",
+                "issues"
+              ],
             'config': {
-              'url': 'http://localhost:8000/webhook',
+              'url': 'http://f7c4e877.ngrok.io/main/webhook',
               'content_type': 'json'
             }
         })
@@ -111,16 +123,36 @@ function createWebhook() {
 
     request('https://api.github.com/orgs/sofiasorganisationtest/hooks?access_token=' + newAccessToken, options, function(err, res, body) {
         if(err) {
+            console.log('ERROR')
             console.log(err)
         } else {
+            console.log('BODY')
             console.log(body)
+        }
+    })
+}
+
+function ping() {
+    let newAccessToken = access_token.substring(13, 53);
+    let options = {
+        method: 'POST',
+        headers: {
+            
+            'User-Agent': 'sofiabjorkesjo'
+        },
+    }
+    request('https://api.github.com/orgs/sofiasorganisationtest/hooks/23130988/pings?' + 'access_token=' + newAccessToken, options, function(err, res, body) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(res.statusCode  )
         }
     })
 }
 
  router.post('/dashboard', function(req, res) {
     username = req.body.username;
-
+    //ping()
     orgsSchema.findOne({'username': username}, function(err, user) {
         if(err) {
             console.log(err)
@@ -138,8 +170,6 @@ function createWebhook() {
  });
 
 
- router.get('/webhook', function(req, res) {
 
- })
 
 module.exports = router;

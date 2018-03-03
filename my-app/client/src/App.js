@@ -6,6 +6,7 @@ import LogIn from './views/LogIn';
 import Settings from './views/Settings';
 import { POINT_CONVERSION_COMPRESSED } from 'constants';
 import Dashboard from './views/Dashboard'
+import Notifications from './views/Notifications'
 import {Redirect} from 'react-router';
 
 
@@ -57,7 +58,8 @@ import {Redirect} from 'react-router';
     //       </div>
     //      );
     //   } else {
-        return (   
+        return ( 
+ 
           <div className="App">
            <main>
         <div>
@@ -75,6 +77,7 @@ import {Redirect} from 'react-router';
                     <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)} callbackFromParent={this.callback}/>}/>
                    
                     <Route path="/Settings" render={()=><Settings />}/>    
+                    <Route path="/webhook" render={()=><Notifications />}/>  
                 </switch>     
             </div>
             <p>{this.state.loggedIn}</p>
