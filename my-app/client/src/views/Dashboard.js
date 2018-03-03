@@ -20,15 +20,12 @@ class Dashboard extends Component {
 
   saveOrganizations(obj) {
     if(obj) {
-      console.log('aaasdaada')
-      console.log(obj)
       let orgs = [];
       let orgsLocalStorage = [];
       for(let i = 0; i < obj.length; i++) {
         orgs.push(<p key={i}>{obj[i].login}</p>)
         orgsLocalStorage.push(obj[i].login)
       }
-      //this.setState({orgs: orgs})
       localStorage.setItem('organisationer', JSON.stringify(orgsLocalStorage))
     }
   }
@@ -40,7 +37,6 @@ class Dashboard extends Component {
     for(let i = 0; i < parsedOrganisations.length; i++) {
       orgsArray.push(<p key={i}>{parsedOrganisations[i]}</p>)
     }
-    //this.setState({orgs: orgsArray})
   }
 
   saveName(name) {
@@ -55,23 +51,15 @@ class Dashboard extends Component {
     this.props.callbackFromParent(info);
   }
 
-  reloadPage() {
-    var test = ['test']
-    for(let i = 0; i < test.length; i++) {
-      console.log('HEEEEJ!!!')
-     // window.location.reload()
-      break;
-    }
-  }
 
   componentDidMount() {
-    let socket = io();
+//     let socket = io();
 
 
-socket.on('message', function (data) {
-    console.log(data)
-});
-    this.reloadPage() 
+// socket.on('message', function (data) {
+//     console.log(data)
+// });
+    //this.reloadPage() 
     if(window.location.search == this.theTemporaryCode()) {
       console.log('AAAAA')
     }
@@ -87,7 +75,6 @@ socket.on('message', function (data) {
       this.callApi()
       .then(res => this.setState({response: res.express.substring(13, 53)}))
       .then(res => {
-        console.log('tetetet' + this.state.response)
         return fetch('https://api.github.com/user?access_token=' + this.state.response, {
         method: 'GET'
       })})
@@ -97,11 +84,6 @@ socket.on('message', function (data) {
       .then(res => {
         return localStorage.setItem('username', this.state.name)
       })
-      .then(console.log(localStorage.getItem('username')))
-      //.then(this.test())
-      .then(console.log('klaaar!!'))
-      
-
       .then(res => {
         return fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
         method: 'GET'
@@ -109,6 +91,7 @@ socket.on('message', function (data) {
       .then(res => res.json())
       .catch(error => console.log(error))
       .then(response => this.saveOrganizations(response)) 
+      
       //.then(this.postUserToServer())
     
 
@@ -158,10 +141,6 @@ socket.on('message', function (data) {
     .then(res => res.json())
     .catch(error => console.error('Error:', error))
     .then(response => this.setOrganisations(response.orgs))
-    //.then(this.testWebhook())
-    .then(console.log('QQQQQ'))
-   // .then(response => this.setState({orgs: response.orgs}))
-   // .then(res => this.setState({orgs: res.orgs}))
   }
 
   setOrganisations(orgs) {
@@ -175,45 +154,7 @@ socket.on('message', function (data) {
     this.setState({orgs: organisations})
   }
 
-  testWebhook() {
-
-    return fetch('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
-      body: JSON.stringify({
-        "name": "web",
-          "config": {
-            "url": "http://localhost:8000/webhook",
-            "content_type": "application/json"
-          }
-      }),
-      headers:  {
-          'Accept': 'application/json',
-          'User-Agent': 'sofiasorganisationtest'
-      },
-      method: 'POST'
-    })
-    .then(res => res.json())
-    .catch(err => console.log(err))
-  //   let options = {
-  //     url: 'https://api.github.com/orgs/sofiasorganisationtest/hooks',
-  //     method: 'POST',
-  //     headers: {
-  //         'Accept': 'application/json',
-  //         'User-Agent': 'sofiabjorkesjo'
-  //     },
-  //     body: JSON.stringify({
-  //         "name": "web",
-  //         "config": {
-  //           "url": "http://localhost:8000/webhook",
-  //           "content_type": "application/json"
-  //         }
-  //     })
-  // }
-  //   return fetch(options)
-  //  // .then(res => res.json())
-  //   .catch(err => console.log(err))
-  //   .then(response => console.log(response))
-  //   .then(console.log('PPPPP'))
-  }
+ 
 
 
 
@@ -232,6 +173,7 @@ socket.on('message', function (data) {
           <p>Dina valda organsationer är: </p>
           {this.state.orgs}
         </div>
+        <p>{this.state.response}</p>
  
       </div>
         );

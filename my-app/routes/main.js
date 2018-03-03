@@ -11,6 +11,7 @@ let access_token;
 
 
 let username;
+let savedOrgs = []
 
 router.get('/:code', function (req, res, next) {
     let temporaryCode = req.url.substring(1);
@@ -31,27 +32,16 @@ router.get('/:code', function (req, res, next) {
     })
  });
 
-//  router.get('/settings', function(req, res) {
-//     console.log('SETTINGS')
-//     request('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
-//         method: 'GET',
-
-//     }), function(error, response) {
-//         if (error) {
-//             console.log(error)
-//         } else {
-//             console.log(response)
-//         }
-//     }
-// })
- 
-
  router.post('/settings', function(req, res) {
-    sparaWebbhook();
+    //getHooks();
     username = req.body.username
     if(req.body.data === undefined) {
         res.send({'message': 'inget att spara'})
     } else {
+        let orgsArray = req.body.data;
+        orgsArray.forEach(element => {
+            savedOrgs.push(element);
+        });
         orgsSchema.findOneAndUpdate({'username': username},
         {username: req.body.username,
          organisations: req.body.data},
@@ -62,6 +52,10 @@ router.get('/:code', function (req, res, next) {
             } else {
                 console.log(user)
                 if(user == null) {
+                    let orgsArray = req.body.data;
+                    orgsArray.forEach(element => {
+                        savedOrgs.push(element);
+                    });
                     let userAndOrgs = new orgsSchema({
                         username: req.body.username,
                         organisations: req.body.data
@@ -70,8 +64,7 @@ router.get('/:code', function (req, res, next) {
                         if(err) {
                             console.log(err)
                         } else {
-                            //sparaWebbhook()
-                            getHooks();
+                            createWebhook()
                             res.send({'express': 'Successfull saved to database'});
                         }
                     }) 
@@ -86,22 +79,21 @@ function getHooks(){
         method: 'GET'
     }), function(err, res) {
         if(err) {
+            console.log('FEEL')
             console.log(err)
         } else {
+            console.log('rätt')
             console.log(res)
         }
     } 
 
 }
 
-
-
-function sparaWebbhook() {
+function createWebhook() {
+    console.log(access_token)
+    let newAccessToken = access_token.substring(13, 53)
+    console.log(newAccessToken)
     let options = {
-        url: 'https://api.github.com/orgs/sofiasorganisationtest/hooks',
-        // oauth: {
-        //     access_token: access_token.substring(13, 53)
-        // },
         method: 'POST',
         headers: {
             'Accept': 'json',
@@ -109,7 +101,7 @@ function sparaWebbhook() {
         },
         body: JSON.stringify({
             'name': 'web',
-            'active': 'true',
+            'active': true,
             'config': {
               'url': 'http://localhost:8000/webhook',
               'content_type': 'json'
@@ -117,44 +109,14 @@ function sparaWebbhook() {
         })
     }
 
-    request(options, function(err, res, body) {
-
+    request('https://api.github.com/orgs/sofiasorganisationtest/hooks?access_token=' + newAccessToken, options, function(err, res, body) {
         if(err) {
             console.log(err)
         } else {
-            console.log(res.body)
+            console.log(body)
         }
     })
-    // return request('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
-    //     method: 'POST',
-    //     header: {
-    //         'User-Agent': 'sb223fz-examination',
-    //     }, 
-    //     body: JSON.stringify  ({
-    //         "name": "web",
-    //         "active": true,
-    //         "events": [
-    //           "push",
-    //           "pull_request"
-    //         ],
-    //         "config": {
-    //           "url": "http://localhost:8000/webhook",
-    //           "content_type": "application/json"
-    //         }
-    //       })
-    // }, function(error, response){
-    //     if (error) {
-    //         console.log(error)
-    //     } else {
-    //         console.log(response.body)
-    //     }
-    // })  
 }
-
-
-
-
-
 
  router.post('/dashboard', function(req, res) {
     username = req.body.username;
@@ -174,5 +136,10 @@ function sparaWebbhook() {
     })
 
  });
+
+
+ router.get('/webhook', function(req, res) {
+
+ })
 
 module.exports = router;

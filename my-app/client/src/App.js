@@ -33,7 +33,7 @@ import {Redirect} from 'react-router';
     this.setState({fromChild: dataFromChild})
    }
 
-  link = 'https://github.com/login/oauth/authorize/?scope=admin:org&repo&user&client_id=80168115df9ea9d87e1f';
+  link = 'https://github.com/login/oauth/authorize/?scope=admin:org_hook,repo,user&client_id=80168115df9ea9d87e1f';
   
   render() {
     console.log(this.state.fromChild)

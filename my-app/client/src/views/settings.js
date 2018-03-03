@@ -42,7 +42,6 @@ class Settings extends Component {
       orgsArray.push(<p key={i}>
         <label>
             <Checkbox 
-              //ref={(input) => { this.textInput = input; }}
               ref = "test"
               onChange={this.onChange.bind(this)}
               disabled={this.state.disabled}
@@ -65,7 +64,6 @@ class Settings extends Component {
      
     }
     this.setState({orgs: orgsArray})
-    //this.hooks()
 
   }
 
@@ -90,31 +88,6 @@ class Settings extends Component {
     }
   }
 
-  hooks() {
-    return fetch('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
-    
-      body: JSON.stringify  ({
-        "name": "web",
-        "active": true,
-        "events": [
-          "push",
-          "pull_request"
-        ],
-        "config": {
-          "url": "http://localhost:8000/webhook",
-          "content_type": "application/json"
-        }
-      }),
-      headers: {
-        'user-agent': 'sofiabjorkesjo',
-        "content_type": "application/json"
-    },
-    method: 'POST', 
-    
-    }).then(res => res.json())
-    .catch(err => console.log(err))
-    .then(response => console.log(response.body))
-  }
 
   save(event) {
     event.preventDefault();
