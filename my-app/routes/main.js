@@ -19,10 +19,28 @@ let webhooksName = []
 
 router.get('/webhook', function(req, res) {
     res.send({'hej': 'hej'})
-
 })
+
 router.post('/webhook', function(req, res) {
-    console.log('TEST')
+    let event;
+    if(req.body.issue) {
+        console.log('ett nytt issue');
+        event = 'issues '
+    }
+    let organisation = req.body.organization.login;
+    let eventAndOrganisation = event + organisation;
+    console.log(eventAndOrganisation)
+    orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log('hittade dessa;');
+            let username = result[0].username;
+            io.emit('test', username)
+            io.emit('notifcation', 'Detta är en notifikation!')
+            console.log('TEST TEST TEST');
+        }
+    })
 //     //io.emit('message', 'hej från main')
 //     let listenToOrgs = [];
 //     savedOrgs.forEach(function(element) {
@@ -181,7 +199,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://a2cf526e.ngrok.io/main/webhook',
+                'url': 'http://7e86b2af.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })

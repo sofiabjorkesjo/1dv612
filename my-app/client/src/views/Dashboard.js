@@ -53,12 +53,16 @@ class Dashboard extends Component {
 
 
   componentDidMount() {
+    console.log('!!!!????!!!???');
     let socket = io();
-    socket.on('message', function (data) {
-        console.log(data)
-    });
-    socket.on('orgs', function (data) {
-      console.log(data)
+    socket.on('test', function (data) {
+      var username = localStorage.getItem('username');
+      if(data === username) {
+        console.log('DESSA ÄR LIKA !!')
+        socket.on('notifcation', function(notification) {
+          console.log(notification);
+        })
+      }
   });
 
    // this.reloadPage() 
