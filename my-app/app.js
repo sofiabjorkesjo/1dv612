@@ -1,5 +1,5 @@
 const express = require('express');
-const main = require('./routes/main.js');
+//const main = require('./routes/main.js');
 const app = express();
 const http = require('http');
 const cors = require('cors');
@@ -17,20 +17,19 @@ app.use(bodyParser.urlencoded({ extended: true }))
 let server = http.createServer(app).listen(port, function() {
   console.log('Started on ' + port);
 });
-
-let socket = require('socket.io')(server);
-app.use('/main', main);
 app.use(cors());
+let io = require('socket.io')(server);
+app.use('/main',require('./routes/main.js')(io));
 
 
-socket.on('connection', function() {
-  console.log('socket connection');
-  socket.emit('message', 'hej')
- //socket.emit('message', 'You are connected to sockets');
- socket.on('disconnected', function () {
-     console.log('disconnected socket');
- });
-});
+
+// io.on('connection', function(socket) {
+//   console.log('socket connection');
+//   socket.emit('message', 'hej')
+//   socket.on('disconnected', function () {
+//      console.log('disconnected socket');
+//  });
+// });
 
 
 

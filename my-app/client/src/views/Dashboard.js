@@ -53,13 +53,15 @@ class Dashboard extends Component {
 
 
   componentDidMount() {
-//     let socket = io();
+    let socket = io();
+    socket.on('message', function (data) {
+        console.log(data)
+    });
+    socket.on('orgs', function (data) {
+      console.log(data)
+  });
 
-
-// socket.on('message', function (data) {
-//     console.log(data)
-// });
-    //this.reloadPage() 
+   // this.reloadPage() 
     if(window.location.search == this.theTemporaryCode()) {
       console.log('AAAAA')
     }

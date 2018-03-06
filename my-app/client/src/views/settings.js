@@ -39,17 +39,47 @@ class Settings extends Component {
     var orgsArray = [];
     for(let i = 0; i < parsedOrgs.length; i++) {
 
-      orgsArray.push(<p key={i}>
+      orgsArray.push(<div key={i + 4}><h3 key={i + 1}>{parsedOrgs[i]}</h3><p key={i}>
         <label>
+          
             <Checkbox 
               ref = "test"
               onChange={this.onChange.bind(this)}
               disabled={this.state.disabled}
-              name={parsedOrgs[i]}
+              name={'issues ' + parsedOrgs[i]} 
             />
-            {parsedOrgs[i]}
+            issues
+
           </label>
-        </p>)      
+        </p>
+
+        <p key={i + 2}>
+          <label>
+            
+              <Checkbox 
+                ref = "test"
+                onChange={this.onChange.bind(this)}
+                disabled={this.state.disabled}
+                name={'push ' + parsedOrgs[i]}
+              />
+              push
+
+            </label>
+        </p>
+
+        <p key={i + 3}>
+           <label>
+              <Checkbox 
+                ref = "test"
+                onChange={this.onChange.bind(this)}
+                disabled={this.state.disabled}
+                name={'release ' + parsedOrgs[i]}
+              />
+              release
+            </label>
+        </p>
+      </div>
+        )      
     }
     return orgsArray
   }

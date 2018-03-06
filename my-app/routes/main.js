@@ -1,6 +1,9 @@
 
 
+
 'use strict';
+
+module.exports = function(io) {
 
 let router = require('express').Router();
 let passport = require('passport');
@@ -12,14 +15,47 @@ let access_token;
 
 let username;
 let savedOrgs = []
+let webhooksName = []
 
 router.get('/webhook', function(req, res) {
     res.send({'hej': 'hej'})
 
 })
 router.post('/webhook', function(req, res) {
-    console.log('TESTAR')
-    console.log(req.body)
+    console.log('TEST')
+//     //io.emit('message', 'hej från main')
+//     let listenToOrgs = [];
+//     savedOrgs.forEach(function(element) {
+//         console.log(savedOrgs);
+//        //FIZA ATT DEN GÅR IGENOM DE TVÅ GÅNGER ALTERNATIVT LÖS PÅ ANNAT SÄTT ELLER NÅTT
+//         orgsSchema.find({organisations: element}, function(err, users) {
+//             if(err) {
+//                 console.log('TESddT')
+//                 console.log(err);
+//             } else {
+//                 console.log('TEffffsdST')
+//                 console.log(users);
+//                 // for(let i = 0; i < users.length; i++) {
+//                 //     console.log(users[i].organisations);
+//                 // }
+//                 // for(let i = 0; i < users.length; i++) {
+//                 //     for(let j = 0; j < users[i].organisations.length; j++) {
+//                 //         if(users[i].organisations[j] === req.body.organization.login) {
+//                 //             //console.log(req.body)
+//                 //             console.log('najs');
+//                 //             let test = req.body.organization.login;
+//                 //             io.emit('orgs', test);
+//                 //         } else {
+//                 //             console.log('matchar inte ')
+//                 //         }
+//                 //     }
+//                 // }
+           
+//             }
+
+//     })
+// }
+// )
 })
 
 
@@ -49,9 +85,15 @@ router.get('/:code', function (req, res, next) {
         res.send({'message': 'inget att spara'})
     } else {
         let orgsArray = req.body.data;
-        orgsArray.forEach(element => {
-            savedOrgs.push(element);
+        orgsArray.forEach(element => {       
+            if(savedOrgs.includes(element)) {
+                console.log('finns redan')
+               } else {
+                savedOrgs.push(element);
+               }     
         });
+        //console.log(savedOrgs);
+        
         createWebhook()
         orgsSchema.findOneAndUpdate({'username': username},
         {username: req.body.username,
@@ -74,7 +116,7 @@ router.get('/:code', function (req, res, next) {
                         if(err) {
                             res.send(err)
                         } else {
-                           // createWebhook()
+                            createWebhook() 
                             res.send({'express': 'Successfull saved to database'});
                         }
                     }) 
@@ -85,7 +127,9 @@ router.get('/:code', function (req, res, next) {
 })
 
 function getHooks(){
-    return request('https://api.github.com/orgs/sofiasorganisationtest/hooks', {
+    console.log('HOOKS')
+    let newAccessToken = access_token.substring(13, 53);
+    request('https://api.github.com/orgs/sofiasorganisationtest/hooks?access_token=' + newAccessToken, {
         method: 'GET'
     }), function(err, res) {
         if(err) {
@@ -100,35 +144,58 @@ function getHooks(){
 }
 
 function createWebhook() {
-    let newAccessToken = access_token.substring(13, 53)
-    let options = {
-        method: 'POST',
-        headers: {
-            'Accept': 'json',
-            'User-Agent': 'sofiabjorkesjo'
-        },
-        body: JSON.stringify({
-            'name': 'web',
-            'active': true,
-            "events": [
-                "push",
-                "issues"
-              ],
-            'config': {
-              'url': 'http://f7c4e877.ngrok.io/main/webhook',
-              'content_type': 'json'
+    console.log(savedOrgs);
+    savedOrgs.forEach(function(element) {
+        let result;
+        let events = [];
+        if(element.includes('issues')) {
+            let str = element;
+            result = str.substring(7);
+            console.log('issues finns med i meningen');
+            events.push('issues');
+            console.log(result);
+        } else if(element.includes('push')) {
+            let str = element;
+            result = str.substring(5);
+            events.push('push')
+            console.log('push finns med i meningen');
+            console.log(result)
+        } else if (element.includes('release')) {
+            let str = element;
+            result = str.substring(8);
+            events.push('release');
+            console.log('release finns med i meningen');
+            console.log(result);
+        }
+        webhooksName.push(element)
+        console.log(events);
+        let newAccessToken = access_token.substring(13, 53)
+        let options = {
+            method: 'POST',
+            headers: {
+                'Accept': 'json',
+                'User-Agent': 'sofiabjorkesjo'
+            },
+            body: JSON.stringify({
+                'name': 'web',
+                'active': true,
+                events,
+                'config': {
+                'url': 'http://a2cf526e.ngrok.io/main/webhook',
+                'content_type': 'json'
+                }
+            })
+        }
+
+        request('https://api.github.com/orgs/'+ result + '/hooks?access_token=' + newAccessToken, options, function(err, res, body) {
+            if(err) {
+                console.log('ERROR')
+                console.log(err)
+            } else {
+                console.log('BODY')
+                console.log(body)
             }
         })
-    }
-
-    request('https://api.github.com/orgs/sofiasorganisationtest/hooks?access_token=' + newAccessToken, options, function(err, res, body) {
-        if(err) {
-            console.log('ERROR')
-            console.log(err)
-        } else {
-            console.log('BODY')
-            console.log(body)
-        }
     })
 }
 
@@ -170,6 +237,8 @@ function ping() {
  });
 
 
+return router;
 
+//module.exports = router;
 
-module.exports = router;
+}
