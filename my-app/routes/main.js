@@ -47,6 +47,8 @@ router.get('/webhook', function(req, res) {
 })
 
 router.post('/webhook', function(req, res) {
+    console.log('YOOO');
+    console.log(req.body);
     let eventIssues;
     let eventPush;
     let eventRelease;
@@ -249,7 +251,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://a63d47bf.ngrok.io/main/webhook',
+                'url': 'http://0b06641a.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })

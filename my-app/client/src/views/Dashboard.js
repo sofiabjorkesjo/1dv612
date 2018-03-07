@@ -12,10 +12,7 @@ class Dashboard extends Component {
       orgs: [],
       socket: '',
       data: '',
-      notifications: [],
-      test: [],
-      aa: ''
-      
+      notifications: [],     
     }
     this.testArray = [];
     this.handleData = this.handleData.bind(this);
@@ -54,50 +51,21 @@ class Dashboard extends Component {
     this.props.callbackFromParent(info);
   }
 
-  //getNoticications() {
-    //let name = localStorage.getItem('username')
-    //let socket = io();
-   // let notification = [];
-    // socket.on(name, function(data) {
-      
-    //   //  console.log(data);
-    //   //  notification.push(data);
-    //   //  console.log(notification);
-    //   //  console.log('NAJS :D');  
-    //  })
-
-    //socket.on(name, this.handleData) 
-      
-      //  console.log(data);
-      //  notification.push(data);
-      //  console.log(notification);
-      //  console.log('NAJS :D');  
-
-
-     //let te = 'aaaa';
-     //this.updateCode(te);
-    // console.log('TETTETETETE');
-     
-
-  //}
-
-
   handleData(data){
     console.log(':D');
     console.log(data);
-    let test = ['1', '2', '2'];
-    this.testArray.push(data);
-    console.log(this.testArray);
-    //this.setState({aa: data})
-    this.setState({test: test})
-    this.setState({notifications: this.testArray})
+    let min = 1;
+    let max = 3000;
+    let random = min + Math.random() * (max - min);
+    this.testArray.push(<p key={random}>{data}</p>);
+    this.setState({notifications: data});
   }
  
 
   componentDidMount() {   
     let name = localStorage.getItem('username')
     let socket = io();
-    socket.on(name, this.handleData) 
+    socket.on(name, (test) => this.handleData(test)) 
 
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
@@ -193,13 +161,6 @@ class Dashboard extends Component {
 
 
   render(props) {
-    // let currentURL = window.location.search;
-    // console.log(currentURL)
-    // if(currentURL) {
-    //   <Redirect to="/dashboard"/>
-    // }
-
-
     return (
       <div className="SettingsDiv">
         <p>You are logged in as {this.state.name}</p>
@@ -209,11 +170,10 @@ class Dashboard extends Component {
         </div>
         <p>{this.state.response}</p>
         <div className="notifications">
-          {this.state.notifications}
-          {this.state.test}
-          {this.state.aa}
-          {this.testArray}
+          <h2>Notifications</h2>
+          <div>{this.testArray}</div>
         </div>
+        
  
       </div>
         );
