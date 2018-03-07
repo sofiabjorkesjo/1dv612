@@ -11,10 +11,14 @@ class Dashboard extends Component {
       name: '',
       orgs: [],
       socket: '',
-      data: ''
+      data: '',
+      notifications: [],
+      test: [],
+      aa: ''
       
     }
-
+    this.testArray = [];
+    this.handleData = this.handleData.bind(this);
   }
 
 
@@ -50,17 +54,50 @@ class Dashboard extends Component {
     this.props.callbackFromParent(info);
   }
 
-  socketTest() {
-    let name = localStorage.getItem('username')
-    let socket = io();
-  
-    socket.on(name, function(data) {
-      console.log(data);
-    })
+  //getNoticications() {
+    //let name = localStorage.getItem('username')
+    //let socket = io();
+   // let notification = [];
+    // socket.on(name, function(data) {
+      
+    //   //  console.log(data);
+    //   //  notification.push(data);
+    //   //  console.log(notification);
+    //   //  console.log('NAJS :D');  
+    //  })
+
+    //socket.on(name, this.handleData) 
+      
+      //  console.log(data);
+      //  notification.push(data);
+      //  console.log(notification);
+      //  console.log('NAJS :D');  
+
+
+     //let te = 'aaaa';
+     //this.updateCode(te);
+    // console.log('TETTETETETE');
+     
+
+  //}
+
+
+  handleData(data){
+    console.log(':D');
+    console.log(data);
+    let test = ['1', '2', '2'];
+    this.testArray.push(data);
+    console.log(this.testArray);
+    //this.setState({aa: data})
+    this.setState({test: test})
+    this.setState({notifications: this.testArray})
   }
+ 
 
   componentDidMount() {   
-    this.socketTest();
+    let name = localStorage.getItem('username')
+    let socket = io();
+    socket.on(name, this.handleData) 
 
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
@@ -89,7 +126,7 @@ class Dashboard extends Component {
       .then(res => res.json())
       .catch(error => console.log(error))
       .then(response => this.saveOrganizations(response)) 
-      
+      //.then(this.reloadTestlite())
       //.then(this.postUserToServer())
     
 
@@ -171,6 +208,12 @@ class Dashboard extends Component {
           {this.state.orgs}
         </div>
         <p>{this.state.response}</p>
+        <div className="notifications">
+          {this.state.notifications}
+          {this.state.test}
+          {this.state.aa}
+          {this.testArray}
+        </div>
  
       </div>
         );

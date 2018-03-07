@@ -38,7 +38,7 @@ io.on('connection', function(socket) {
     allUsers.forEach(function(element) {
         console.log('hej: ' + element);
         socket.join(element);
-        io.sockets.in(element).emit(element, element + 'in the room');
+        //io.sockets.in(element).emit(element, element + 'in the room');
     });
 })
 
@@ -127,6 +127,7 @@ router.post('/webhook', function(req, res) {
 
 
 router.get('/:code', function (req, res, next) {
+    //window.location.reload(true);
     let temporaryCode = req.url.substring(1);
    
     request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
@@ -140,6 +141,7 @@ router.get('/:code', function (req, res, next) {
         } else {
             access_token = response.body
             res.send({express: response.body});
+            
         }
     })
  });
@@ -284,6 +286,7 @@ function ping() {
 }
 
  router.post('/dashboard', function(req, res) {
+    
     username = req.body.username;
     //ping()
     orgsSchema.findOne({'username': username}, function(err, user) {

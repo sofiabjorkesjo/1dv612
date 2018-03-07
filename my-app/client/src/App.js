@@ -73,12 +73,12 @@ import {Redirect} from 'react-router';
         </div>
         <div>
             <div>
-                <switch>
+                
                     <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)} callbackFromParent={this.callback}/>}/>
                    
                     <Route path="/Settings" render={()=><Settings />}/>    
                     <Route path="/webhook" render={()=><Notifications />}/>  
-                </switch>     
+                 
             </div>
             <p>{this.state.loggedIn}</p>
             <p>{this.state.fromChild}</p>
