@@ -22,14 +22,16 @@ let io = require('socket.io')(server);
 app.use('/main',require('./routes/main.js')(io));
 
 
-
 // io.on('connection', function(socket) {
 //   console.log('socket connection');
-//   socket.emit('message', 'hej')
+//    socket.join('room');
+//    io.sockets.in('room').emit('connectToRoom', 'in the room');
+
 //   socket.on('disconnected', function () {
 //      console.log('disconnected socket');
 //  });
 // });
+
 
 
 

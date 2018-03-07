@@ -47,34 +47,26 @@ class Dashboard extends Component {
 
   toParent = () => {
     var info = this.theTemporaryCode()
-
     this.props.callbackFromParent(info);
   }
 
-
-  componentDidMount() {
-    console.log('!!!!????!!!???');
+  socketTest() {
+    let name = localStorage.getItem('username')
     let socket = io();
-    socket.on('test', function (data) {
-      var username = localStorage.getItem('username');
-      if(data === username) {
-        console.log('DESSA ÄR LIKA !!')
-        socket.on('notifcation', function(notification) {
-          console.log(notification);
-        })
-      }
-  });
+  
+    socket.on(name, function(data) {
+      console.log(data);
+    })
+  }
 
-   // this.reloadPage() 
-    if(window.location.search == this.theTemporaryCode()) {
-      console.log('AAAAA')
-    }
+  componentDidMount() {   
+    this.socketTest();
+
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
       this.setState({name: username})
       this.getOrganizations() 
-      this.postUserToServer()
-      
+      this.postUserToServer()     
     } else {
       this.toParent()
       this.props.routes()
@@ -112,7 +104,7 @@ class Dashboard extends Component {
   }
 
   getTemporaryCode = () => {
-    console.log(window.location.search);
+    //console.log(window.location.search);
     const search = window.location.search;
     const code = search.substring(6);
     return code 
@@ -133,7 +125,6 @@ class Dashboard extends Component {
   postUserToServer() {
     var username = localStorage.getItem('username');
     var url = '/main/dashboard';
-    console.log('tttt');
     var obj = {'username': username}
 
     return fetch(url, {
@@ -150,8 +141,8 @@ class Dashboard extends Component {
   }
 
   setOrganisations(orgs) {
-    console.log('test orgs')
-    console.log(orgs)
+    //console.log('test orgs')
+    //console.log(orgs)
     var organisations = [];
     for(let i = 0; i < orgs.length; i++) {
       organisations.push(<p key={i}>{orgs[i]}</p>)

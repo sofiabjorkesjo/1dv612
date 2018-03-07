@@ -14,66 +14,63 @@ let access_token;
 
 
 let username;
-let savedOrgs = []
-let webhooksName = []
+let savedOrgs = [];
+let webhooksName = [];
+let allUsers = [];
+
+function findAllUsers(req, res) {
+    orgsSchema.find({}, function(err, users) {
+        if (err) {
+            console.log(err);
+        } else {
+            for(let i = 0; i < users.length; i++) {
+                allUsers.push(users[i].username);
+            }
+            return allUsers;
+        }
+    })
+}
+
+
+findAllUsers();
+io.on('connection', function(socket) {
+    console.log('connectade till sockets');    
+    allUsers.forEach(function(element) {
+        console.log('hej: ' + element);
+        socket.join(element);
+        io.sockets.in(element).emit(element, element + 'in the room');
+    });
+})
 
 router.get('/webhook', function(req, res) {
     res.send({'hej': 'hej'})
 })
 
 router.post('/webhook', function(req, res) {
-    let event;
+    let eventIssues;
+    let eventPush;
+    let eventRelease;
     if(req.body.issue) {
         console.log('ett nytt issue');
-        event = 'issues '
-    }
-    let organisation = req.body.organization.login;
-    let eventAndOrganisation = event + organisation;
-    console.log(eventAndOrganisation)
-    orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
-        if(err) {
-            console.log(err);
-        } else {
-            console.log('hittade dessa;');
-            let username = result[0].username;
-            io.emit('test', username)
-            io.emit('notifcation', 'Detta är en notifikation!')
-            console.log('TEST TEST TEST');
-        }
-    })
-//     //io.emit('message', 'hej från main')
-//     let listenToOrgs = [];
-//     savedOrgs.forEach(function(element) {
-//         console.log(savedOrgs);
-//        //FIZA ATT DEN GÅR IGENOM DE TVÅ GÅNGER ALTERNATIVT LÖS PÅ ANNAT SÄTT ELLER NÅTT
-//         orgsSchema.find({organisations: element}, function(err, users) {
-//             if(err) {
-//                 console.log('TESddT')
-//                 console.log(err);
-//             } else {
-//                 console.log('TEffffsdST')
-//                 console.log(users);
-//                 // for(let i = 0; i < users.length; i++) {
-//                 //     console.log(users[i].organisations);
-//                 // }
-//                 // for(let i = 0; i < users.length; i++) {
-//                 //     for(let j = 0; j < users[i].organisations.length; j++) {
-//                 //         if(users[i].organisations[j] === req.body.organization.login) {
-//                 //             //console.log(req.body)
-//                 //             console.log('najs');
-//                 //             let test = req.body.organization.login;
-//                 //             io.emit('orgs', test);
-//                 //         } else {
-//                 //             console.log('matchar inte ')
-//                 //         }
-//                 //     }
-//                 // }
-           
-//             }
-
-//     })
-// }
-// )
+        eventIssues = 'issues ';
+        let organisation = req.body.organization.login;
+        let eventAndOrganisation = eventIssues + organisation;
+        console.log(eventAndOrganisation)
+        orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
+            if(err) {
+                console.log(err);
+            } else {
+                let usernames = [];
+                for(let i = 0; i < result.length; i++) {
+                    usernames.push(result[i].username);
+                }
+                
+                usernames.forEach(function(element) {
+                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig!');
+                })
+            }
+        })
+    }   
 })
 
 
@@ -199,7 +196,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://7e86b2af.ngrok.io/main/webhook',
+                'url': 'http://a63d47bf.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })
