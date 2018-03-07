@@ -50,6 +50,9 @@ router.post('/webhook', function(req, res) {
     let eventIssues;
     let eventPush;
     let eventRelease;
+    //console.log(req.body);
+    //console.log(req.body.repository.pushed_at);
+    //console.log('NAJS!');
     if(req.body.issue) {
         console.log('ett nytt issue');
         eventIssues = 'issues ';
@@ -66,11 +69,59 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
-                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig!');
+                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! En ny issue!');
                 })
             }
         })
-    }   
+    }
+    
+    if(req.body.ref) {
+        console.log('new push här');
+        eventPush = 'push ';
+        let organisation = req.body.repository.organization;
+        let eventAndOrganisation = eventPush + organisation;
+        console.log(eventAndOrganisation);
+        orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log('DESSA MATCHAR');
+                console.log(result);
+                let usernames = [];
+                for(let i = 0; i < result.length; i++) {
+                    usernames.push(result[i].username);
+                }
+                
+                usernames.forEach(function(element) {
+                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! Nytt push event!');
+                })
+            }
+        })
+    }
+  
+    if(req.body.release) {
+        console.log('new release');
+        eventRelease = 'release ';
+        let organisation = req.body.organization.login;
+        let eventAndOrganisation = eventRelease + organisation;
+        console.log(eventAndOrganisation);
+        orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log('DESSA MATCHAR');
+                console.log(result);
+                let usernames = [];
+                for(let i = 0; i < result.length; i++) {
+                    usernames.push(result[i].username);
+                }
+                
+                usernames.forEach(function(element) {
+                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! En ny release!');
+                })
+            }
+        })
+    }
 })
 
 
