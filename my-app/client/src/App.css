@@ -1,28 +1,49 @@
 .App {
   text-align: center;
+  background-color: aquamarine;
+  width: 100%;
+  margin: 0 auto;
+  height: 500px;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.links {
+  width: 50%;
+  background-color: aqua;
+  margin: 0 auto;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+li {
+  display: inline;
+  padding: 10px;
+  text-decoration-line: none;
+  text-decoration-style: none;
+  text-decoration: unset;
 }
 
-.App-title {
-  font-size: 1.5em;
+.loggedInAs {
+  background-color: violet;
 }
 
-.App-intro {
-  font-size: large;
+.orgs {
+  width: 48%;
+  height: 300px;
+  float: left;
+  background-color: tomato;
+  margin-right: 2%;
+
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.notifications {
+  float: left;
+  height: 300px;
+  width: 48%;
+  background-color: slateblue;
+  margin-left: 2%;
+
+}
+
+.DashboardsDiv {
+  width: 50%;
+  background-color: yellow;
+  margin: 0 auto;
 }

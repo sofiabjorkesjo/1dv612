@@ -66,7 +66,7 @@ import {Redirect} from 'react-router';
             <div>
                 <a href={this.link}>Log in</a> 
             </div>
-            <div>
+            <div className="links">
               <li><Link to="/dashboard">Home</Link></li>
               <li><Link to="/Settings">Settings</Link></li>     
             </div>
@@ -77,7 +77,7 @@ import {Redirect} from 'react-router';
                     <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)} callbackFromParent={this.callback}/>}/>
                    
                     <Route path="/Settings" render={()=><Settings />}/>    
-                    <Route path="/webhook" render={()=><Notifications />}/>  
+                  
                  
             </div>
             <p>{this.state.loggedIn}</p>

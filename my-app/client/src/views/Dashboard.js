@@ -162,9 +162,12 @@ class Dashboard extends Component {
 
   render(props) {
     return (
-      <div className="SettingsDiv">
-        <p>You are logged in as {this.state.name}</p>
-        <div>
+      <div className="DashboardsDiv">
+        <div className="loggedInAs">
+          <p>You are logged in as {this.state.name}</p>
+        </div>
+        
+        <div className="orgs">
           <p>Dina valda organsationer är: </p>
           {this.state.orgs}
         </div>
