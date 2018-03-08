@@ -63,12 +63,25 @@ class Dashboard extends Component {
 
   handleData(data){
     console.log(':D');
-    console.log(data);
-    let min = 1;
-    let max = 3000;
-    let random = min + Math.random() * (max - min);
-    this.testArray.push(<p key={random}>{data}</p>);
-    this.setState({notifications: data});
+
+    if(data.event = 'issue') {
+      let subject = data.subject;
+      let action = data.action;
+      let title = data.title;
+      let organization = data.organization;
+      let repository = data.repository;
+      let user = data.user;
+      let date = data.date;
+
+      let min = 1;
+      let max = 3000;
+      let random = min + Math.random() * (max - min);
+      this.testArray.push(<div key={random} className="notificationDiv"><p key={random} className="date">{date}</p><p key={random} className="subject">{subject}</p><p key={random} className="title"><span key={random} className="titleName">{title}</span>{' by '}{user}</p></div>);
+      this.setState({notifications: subject});
+    }
+
+
+
   }
 
   jj() {
@@ -164,7 +177,7 @@ class Dashboard extends Component {
 
     var organisations = [];
     for(let i = 0; i < orgs.length; i++) {
-      organisations.push(<p key={i}>{orgs[i]}</p>)
+      organisations.push(<p key={i} className="pTags">{orgs[i]}</p>)
     }
 
     this.setState({orgs: organisations})
@@ -182,11 +195,11 @@ class Dashboard extends Component {
         </div>
         
         <div className="orgs">
-          <p>Dina valda organsationer är: </p>
+          <p className="h2">Event you follow</p>
           {this.state.orgs}
         </div>
         <div className="notifications">
-          <h2>Notifications</h2>
+          <h2 className="h2">Notifications</h2>
           <div>{this.testArray}</div>
         </div>
       </div>

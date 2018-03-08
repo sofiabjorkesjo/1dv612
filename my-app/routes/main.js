@@ -59,7 +59,19 @@ router.post('/webhook', function(req, res) {
     let eventRelease;
 
     if(req.body.issue) {
+        let issueObj = {
+            'event': 'issue',
+            'subject': 'New issue',
+            'action': req.body.action,
+            'title': req.body.issue.title,
+            'organization': req.body.organization.login,
+            'repository': req.body.repository.name,
+            'user': req.body.issue.user.login,
+            'date': req.body.issue.created_at
+
+        }
         console.log('ett nytt issue');
+        console.log(issueObj);
         eventIssues = 'issues ';
         let organisation = req.body.organization.login;
         let eventAndOrganisation = eventIssues + organisation;
@@ -75,12 +87,12 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
-                    io.sockets.in(element).emit(element, element + ' detta är en notikation till dig! En ny issue!');
+                    io.sockets.in(element).emit(element, issueObj);
                 })
                 //sendEmail();
                 email.forEach(function(element) {
                     let issue = 'en ny issue!'
-                    sendEmail(element, issue);
+                    //sendEmail(element, issue);
                 })
 
                 
@@ -113,7 +125,7 @@ router.post('/webhook', function(req, res) {
 
                 email.forEach(function(element) {
                     let push = 'nytt push event!'
-                    sendEmail(element, push);
+                    //sendEmail(element, push);
                 })
             }
         })
@@ -144,7 +156,7 @@ router.post('/webhook', function(req, res) {
 
                 email.forEach(function(element) {
                     let release = 'ny release!'
-                    sendEmail(element, release);
+                    //sendEmail(element, release);
                 })
             }
         })
@@ -278,7 +290,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://89c9b60c.ngrok.io/main/webhook',
+                'url': 'http://0f7b6e04.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })

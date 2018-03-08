@@ -156,8 +156,12 @@ class Settings extends Component {
         <input type="Submit" value="submit" readOnly/>
         </form>
       </div>
+
+      
       <div>
       </div>
+
+      
       </main>
         );
       }    

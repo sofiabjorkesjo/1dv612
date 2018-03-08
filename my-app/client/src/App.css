@@ -1,49 +1,126 @@
 .App {
-  text-align: center;
-  background-color: aquamarine;
-  width: 100%;
-  margin: 0 auto;
-  height: 500px;
-}
+    text-align: center;
+    background-color: white;
+    width: 100%;
+    margin: 0 auto;
+    height: 500px;
+  }
 
-.links {
-  width: 50%;
-  background-color: aqua;
-  margin: 0 auto;
-}
+  .links {
+    width: 100%;
+    height: 60px;
+    background-color: rgba(226, 226, 226, 0.22);
+    margin: 0 auto;
+    font-family: Verdana;
+    box-shadow: 1px 1px 5px  #999999;
+    font-size: 25px;
+    font-weight: lighter;
+    color: black;
+    padding: 20px;
+    
+  }
 
-li {
-  display: inline;
-  padding: 10px;
-  text-decoration-line: none;
-  text-decoration-style: none;
-  text-decoration: unset;
-}
+  li {
+    display: inline;
+    padding: 10px;
+    text-decoration-line: none;
+    text-decoration-style: none;
+    text-decoration: unset;
+    color: black
+  }
+  
+  .loggedInAs {
+    height: 40px;
+    background-color: rgba(226, 226, 226, 0.22);
+    margin-bottom: 30px; 
+    padding: 10px;
+    margin-top: 30px; 
+    box-shadow: 1px 1px 5px  #999999;
 
-.loggedInAs {
-  background-color: violet;
-}
+  }
 
-.orgs {
-  width: 48%;
-  height: 300px;
-  float: left;
-  background-color: tomato;
-  margin-right: 2%;
+  .loggedInAs p {
+    font-size: 11px;
+    font-family: Verdana;
+    
+  }
 
-}
+  .notifications {
+    float: left;
+    height: 300px;
+    width: 48%;
+    background-color: rgba(226, 226, 226, 0.22);
+    margin-bottom: 40px; 
+    margin-left: 2%;
+    box-shadow: 1px 1px 5px  #999999;
+  }
+  
+  .h2 {
+    font-family: Verdana;
+    font-size: 18px;
+    font-weight: lighter;
+  }
 
-.notifications {
-  float: left;
-  height: 300px;
-  width: 48%;
-  background-color: slateblue;
-  margin-left: 2%;
+  .notificationDiv {
+    width: 80%;
+    height: 80px;
+   
+    border-bottom: 1px solid black;
+    margin: 0 auto;
+  }
+  
+  .DashboardsDiv {
+    width: 50%;
+    background-color: white;
+    margin: 0 auto;
+  }
 
-}
+  .p {
+    font-family: Verdana;
+    font-size: 2px;
+  }
+  
+  .date{
+    font-family: Verdana;
+    font-size: 10px;
+  }
+  
+  .subject {
+    font-family: Verdana;
+    font-size: 12px;
+    font-weight: bold;
+  }
 
-.DashboardsDiv {
-  width: 50%;
-  background-color: yellow;
-  margin: 0 auto;
-}
+  .title {
+    font-family: Verdana;
+    font-size: 12px;
+  }
+  
+  .titleName {
+    font-style: italic;
+  }
+  
+  .userIssue{
+    font-family: Verdana;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .pTags {
+    font-family: Verdana;
+    font-size: 12px;
+  }
+
+  .orgs {
+    width: 48%;
+    height: 300px;
+    float: left;
+    background-color:rgba(226, 226, 226, 0.22);
+    box-shadow: 1px 1px 5px  #999999;
+    margin-right: 2%;
+  
+  }
+
+
+  a {color:black; text-decoration:none;}
+  a:hover {text-decoration:underline;}

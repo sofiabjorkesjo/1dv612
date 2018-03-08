@@ -20,10 +20,10 @@ import {Redirect} from 'react-router';
       loggedIn: 'false',
       fromChild: ''  
     };
-
+    //this.logoutFunction()
     
   }
-  
+
    changeState() {
      this.setState({loggedIn: 'true'})
    }
@@ -32,9 +32,17 @@ import {Redirect} from 'react-router';
     this.setState({fromChild: dataFromChild})
    }
 
+  
+
    logoutFunction() {
-     localStorage.removeItem('username'); 
-     localStorage.removeItem('organisationer');
+    var test = document.getElementById("test").onClick(console.log('sss'));
+    this.test.onClick(console.log('klick!'));
+ 
+   }
+
+   testar() {
+    localStorage.removeItem('username'); 
+    localStorage.removeItem('organisationer');
    }
 
   link = 'https://github.com/login/oauth/authorize/?scope=admin:org_hook,repo,user&client_id=80168115df9ea9d87e1f';
@@ -62,6 +70,7 @@ import {Redirect} from 'react-router';
     //      );
     //   } else {
         return ( 
+          
  
           <div className="App">
            <main>
