@@ -23,9 +23,7 @@ import {Redirect} from 'react-router';
 
     
   }
-
   
-
    changeState() {
      this.setState({loggedIn: 'true'})
    }
@@ -34,8 +32,13 @@ import {Redirect} from 'react-router';
     this.setState({fromChild: dataFromChild})
    }
 
+   logoutFunction() {
+     localStorage.removeItem('username'); 
+     localStorage.removeItem('organisationer');
+   }
+
   link = 'https://github.com/login/oauth/authorize/?scope=admin:org_hook,repo,user&client_id=80168115df9ea9d87e1f';
-  
+  logOut = '/';
   render() {
     console.log(this.state.fromChild)
     //   if(this.state.loggedIn === 'false') {
@@ -68,7 +71,8 @@ import {Redirect} from 'react-router';
             </div>
             <div className="links">
               <li><Link to="/dashboard">Home</Link></li>
-              <li><Link to="/Settings">Settings</Link></li>     
+              <li><Link to="/Settings">Settings</Link></li>  
+              <a href={this.logOut} onClick={this.logoutFunction}>Log out</a>    
             </div>
         </div>
         <div>

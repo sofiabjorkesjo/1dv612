@@ -251,7 +251,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://0b06641a.ngrok.io/main/webhook',
+                'url': 'http://89c9b60c.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })

@@ -20,6 +20,7 @@ class Dashboard extends Component {
 
 
   saveOrganizations(obj) {
+    console.log('först detta');
     if(obj) {
       let orgs = [];
       let orgsLocalStorage = [];
@@ -28,10 +29,17 @@ class Dashboard extends Component {
         orgsLocalStorage.push(obj[i].login)
       }
       localStorage.setItem('organisationer', JSON.stringify(orgsLocalStorage))
+      console.log('klar här');
+
     }
   }
 
+  test() {
+    console.log('sen detta efter'); 
+  }
+
   getOrganizations() {
+    console.log('börjar här')
     var organisations = localStorage.getItem('organisationer');
     var parsedOrganisations = JSON.parse(organisations)
     var orgsArray = [];
@@ -60,6 +68,12 @@ class Dashboard extends Component {
     this.testArray.push(<p key={random}>{data}</p>);
     this.setState({notifications: data});
   }
+
+  jj() {
+    let name = localStorage.getItem('username')
+    let socket = io();
+    socket.on(name, (test) => this.handleData(test)) 
+  }
  
 
   componentDidMount() {   
@@ -70,7 +84,7 @@ class Dashboard extends Component {
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
       this.setState({name: username})
-      this.getOrganizations() 
+      //this.getOrganizations() 
       this.postUserToServer()     
     } else {
       this.toParent()
@@ -93,12 +107,9 @@ class Dashboard extends Component {
       })})
       .then(res => res.json())
       .catch(error => console.log(error))
-      .then(response => this.saveOrganizations(response)) 
-      //.then(this.reloadTestlite())
-      //.then(this.postUserToServer())
-    
-
-
+      .then(response=> this.saveOrganizations(response))
+      .then(response => { return this.postUserToServer()})
+      .then(test => {return this.jj()})
     }
     
   }
@@ -124,8 +135,6 @@ class Dashboard extends Component {
     }
     return body;
   };
-  
-  
 
   postUserToServer() {
     var username = localStorage.getItem('username');
@@ -146,8 +155,7 @@ class Dashboard extends Component {
   }
 
   setOrganisations(orgs) {
-    //console.log('test orgs')
-    //console.log(orgs)
+
     var organisations = [];
     for(let i = 0; i < orgs.length; i++) {
       organisations.push(<p key={i}>{orgs[i]}</p>)
@@ -171,7 +179,6 @@ class Dashboard extends Component {
           <p>Dina valda organsationer är: </p>
           {this.state.orgs}
         </div>
-        <p>{this.state.response}</p>
         <div className="notifications">
           <h2>Notifications</h2>
           <div>{this.testArray}</div>
