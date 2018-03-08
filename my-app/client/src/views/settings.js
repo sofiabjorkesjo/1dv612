@@ -132,7 +132,8 @@ class Settings extends Component {
     console.log('asasas');
     console.log(data);
     var username = localStorage.getItem('username');
-    var obj = {'data': data, 'username': username}
+    var email = localStorage.getItem('email');
+    var obj = {'data': data, 'username': username, 'email': email}
 
     return fetch(url, {
       method: 'POST', 

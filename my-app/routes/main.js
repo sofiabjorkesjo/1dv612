@@ -10,6 +10,7 @@ let passport = require('passport');
 let request = require('request');
 let orgsSchema = require('../models/organisations');
 let env = require('env2')('.env');
+let nodemailer = require('nodemailer');
 let access_token;
 
 
@@ -24,8 +25,14 @@ function findAllUsers(req, res) {
             console.log(err);
         } else {
             for(let i = 0; i < users.length; i++) {
-                allUsers.push(users[i].username);
+                let obj = {
+                    'username': users[i].username,
+                    'email': users[i].email
+                }
+                allUsers.push(obj);
             }
+            console.log('test test ')
+            console.log(allUsers);
             return allUsers;
         }
     })
@@ -34,11 +41,11 @@ function findAllUsers(req, res) {
 
 findAllUsers();
 io.on('connection', function(socket) {
-    console.log('connectade till sockets');    
+    console.log('connectade till sockets');   
+   // console.log(allUsers); 
     allUsers.forEach(function(element) {
-        console.log('hej: ' + element);
-        socket.join(element);
-        //io.sockets.in(element).emit(element, element + 'in the room');
+        console.log('hej: ' + element.username);
+        socket.join(element.username);
     });
 })
 
@@ -47,32 +54,36 @@ router.get('/webhook', function(req, res) {
 })
 
 router.post('/webhook', function(req, res) {
-    console.log('YOOO');
-    console.log(req.body);
     let eventIssues;
     let eventPush;
     let eventRelease;
-    //console.log(req.body);
-    //console.log(req.body.repository.pushed_at);
-    //console.log('NAJS!');
+
     if(req.body.issue) {
         console.log('ett nytt issue');
         eventIssues = 'issues ';
         let organisation = req.body.organization.login;
         let eventAndOrganisation = eventIssues + organisation;
-        console.log(eventAndOrganisation)
         orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
             if(err) {
                 console.log(err);
             } else {
                 let usernames = [];
+                let email = [];
                 for(let i = 0; i < result.length; i++) {
                     usernames.push(result[i].username);
+                    email.push(result[i].email)
                 }
                 
                 usernames.forEach(function(element) {
-                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! En ny issue!');
+                    io.sockets.in(element).emit(element, element + ' detta är en notikation till dig! En ny issue!');
                 })
+                //sendEmail();
+                email.forEach(function(element) {
+                    let issue = 'en ny issue!'
+                    sendEmail(element, issue);
+                })
+
+                
             }
         })
     }
@@ -90,12 +101,19 @@ router.post('/webhook', function(req, res) {
                 console.log('DESSA MATCHAR');
                 console.log(result);
                 let usernames = [];
+                let email = [];
                 for(let i = 0; i < result.length; i++) {
                     usernames.push(result[i].username);
+                    email.push(result[i].email)
                 }
                 
                 usernames.forEach(function(element) {
                     io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! Nytt push event!');
+                })
+
+                email.forEach(function(element) {
+                    let push = 'nytt push event!'
+                    sendEmail(element, push);
                 })
             }
         })
@@ -114,12 +132,19 @@ router.post('/webhook', function(req, res) {
                 console.log('DESSA MATCHAR');
                 console.log(result);
                 let usernames = [];
+                let email = [];
                 for(let i = 0; i < result.length; i++) {
                     usernames.push(result[i].username);
+                    email.push(result[i].email);
                 }
                 
                 usernames.forEach(function(element) {
                     io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! En ny release!');
+                })
+
+                email.forEach(function(element) {
+                    let release = 'ny release!'
+                    sendEmail(element, release);
                 })
             }
         })
@@ -167,7 +192,8 @@ router.get('/:code', function (req, res, next) {
         createWebhook()
         orgsSchema.findOneAndUpdate({'username': username},
         {username: req.body.username,
-         organisations: req.body.data},
+         organisations: req.body.data,
+        email: req.body.email},
          {new: true},
         function(err, user) {
             if(err) {
@@ -180,7 +206,8 @@ router.get('/:code', function (req, res, next) {
                     });
                     let userAndOrgs = new orgsSchema({
                         username: req.body.username,
-                        organisations: req.body.data
+                        organisations: req.body.data,
+                        email: req.body.email
                     });
                     userAndOrgs.save(function(err, result) {
                         if(err) {
@@ -287,22 +314,74 @@ function ping() {
     })
 }
 
- router.post('/dashboard', function(req, res) {
+var transporter = nodemailer.createTransport({
+    host: 'smtp@gmail.com',
+    port: 465,
+    secure: true,
+    service: 'gmail',
+    auth: {
+        user: 'sofiiiabjorkesjo@gmail.com',
+        pass: 'sussiecleo'
+    }
+});
+
+function sendEmail(email, subject) {
+        console.log(email);
+        console.log('sending email!');
+        var mailOptions = {
+            from: 'sofiiiabjorkesjo@gmail.com',
+            to: email,
+            subject: 'Notification' + subject,
+            text: 'Du har en ny notifikation!' + subject
+        };
     
+        transporter.sendMail(mailOptions, function(error, info) {
+            if(error) {
+                console.log(error);
+            } else {
+                console.log('Message sent:' + info.response);
+            };
+        });
+
+}
+
+ router.post('/dashboard', function(req, res) {
     username = req.body.username;
-    //ping()
     orgsSchema.findOne({'username': username}, function(err, user) {
         if(err) {
             console.log(err)
         } else {
-            console.log(user)
+            if(user === null) {
+                let newUser = new orgsSchema({
+                    username: req.body.username,
+                    organisations: [],
+                    email: req.body.email
+                });
+                newUser.save(function(err, user) {
+                    if(err) {
+                        console.log('error blev de nu')
+                        console.log(err);
+                    } else {
+                        console.log(user);
+                        console.log('resultatet här');
+
+                        let result = {
+                            'orgs': '',
+                            'user': newUser.username
+                        }
+                        console.log(result);
+                        res.send(result);
+                    }
+                })
+            } else {
+                let result = {
+                    'orgs': user.organisations,
+                    'user': user.username
+                 }
+                console.log(result)
+                res.send(result)
+            }
         }
-        let result = {
-            'orgs': user.organisations,
-            'user': user.username
-        }
-        console.log(result)
-        res.send(result)
     })
 
  });

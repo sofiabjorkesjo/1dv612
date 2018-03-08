@@ -9,6 +9,7 @@ class Dashboard extends Component {
     this.state = {
       response: '',
       name: '',
+      email: '',
       orgs: [],
       socket: '',
       data: '',
@@ -48,8 +49,9 @@ class Dashboard extends Component {
     }
   }
 
-  saveName(name) {
-    this.setState({name: name})
+  saveUser(res) {
+    this.setState({name: res.name});
+    this.setState({email: res.email})
 
   }
 
@@ -97,9 +99,12 @@ class Dashboard extends Component {
       })})
       .then(res => res.json() )
       .catch(error => console.error(error))
-      .then(res => this.saveName(res.name))
+      .then(res => this.saveUser(res))
       .then(res => {
         return localStorage.setItem('username', this.state.name)
+      })
+      .then(res => {
+        return localStorage.setItem('email', this.state.email)
       })
       .then(res => {
         return fetch('https://api.github.com/user/orgs?access_token=' + this.state.response,{
@@ -138,8 +143,9 @@ class Dashboard extends Component {
 
   postUserToServer() {
     var username = localStorage.getItem('username');
+    var email = localStorage.getItem('email');
     var url = '/main/dashboard';
-    var obj = {'username': username}
+    var obj = {'username': username, 'email': email}
 
     return fetch(url, {
       method: 'POST', 
@@ -151,7 +157,7 @@ class Dashboard extends Component {
     .then(console.log('postat till server'))
     .then(res => res.json())
     .catch(error => console.error('Error:', error))
-    .then(response => this.setOrganisations(response.orgs))
+    .then(response => {return this.setOrganisations(response.orgs)})
   }
 
   setOrganisations(orgs) {
@@ -183,8 +189,6 @@ class Dashboard extends Component {
           <h2>Notifications</h2>
           <div>{this.testArray}</div>
         </div>
-        
- 
       </div>
         );
       }   

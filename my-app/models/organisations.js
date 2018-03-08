@@ -3,7 +3,8 @@ let findOrCreate = require('mongoose-find-or-create');
 
 let orgsSchema = new mongoose.Schema({
     username: {type: String},
-    organisations: {type: []}
+    organisations: {type: []},
+    email: {type: String}
 });
 
 orgsSchema.plugin(findOrCreate)
