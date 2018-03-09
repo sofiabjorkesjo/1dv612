@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Redirect} from 'react-router';
-import Links from './Links';
 import io from "socket.io-client";
 
 class Dashboard extends Component {  

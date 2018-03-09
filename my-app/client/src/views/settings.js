@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Links from './Links';
 import { RadioGroup, RadioButton } from 'react-radio-buttons';
 import { SSL_OP_CISCO_ANYCONNECT } from 'constants';
 import Checkbox from 'rc-checkbox'
