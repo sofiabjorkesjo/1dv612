@@ -69,6 +69,13 @@
     margin: 0 auto;
   }
   
+  .sinceLastTime {
+    width: 80%;
+    height: 80px;
+   
+    border-bottom: 1px solid black;
+    margin: 0 auto;
+  }
   .DashboardsDiv {
     width: 50%;
     background-color: white;

@@ -12,7 +12,8 @@ class Dashboard extends Component {
       orgs: [],
       socket: '',
       data: '',
-      notifications: [],     
+      notifications: [],   
+      events: []  
     }
     this.testArray = [];
     this.handleData = this.handleData.bind(this);
@@ -57,7 +58,17 @@ class Dashboard extends Component {
       .then(console.log('ska posta o hämta events'))
       .then(res => res.json())
       .catch(error => console.error('Error:', error))
-      .then(response => console.log(response))
+     // .then(response => this.setState({events: response.type}))
+     //.then(response => console.log(response.events[0].type))
+     .then(response => {
+       let arr = [];
+       response.events.forEach(function(element) {
+         console.log(element);
+         arr.push(<div><p>{element.type}</p> <p>{element.created_at}</p></div>)
+       })
+       console.log(arr);
+       this.setState({events: arr})
+     })
   }
 
 
@@ -233,6 +244,7 @@ class Dashboard extends Component {
   render(props) {
     return (
       <div className="DashboardsDiv">
+      
         <div className="loggedInAs">
           <p>You are logged in as {this.state.name}</p>
         </div>
@@ -243,6 +255,8 @@ class Dashboard extends Component {
         </div>
         <div className="notifications">
           <h2 className="h2">Notifications</h2>
+          <div className="sinceLastTime">{this.state.events}</div>
+         
           <div>{this.testArray}</div>
         </div>
       </div>
