@@ -16,6 +16,48 @@ class Dashboard extends Component {
     }
     this.testArray = [];
     this.handleData = this.handleData.bind(this);
+    
+  }
+
+  clickOnSiet() {
+    document.addEventListener('click', function() {
+      console.log('du klickade');
+      localStorage.setItem('time', new Date());
+      let time = localStorage.getItem('time');
+      let username = localStorage.getItem('username');
+      var url = '/main/dashboard/active';
+      var obj = {'username': username, 'time': time}
+  
+      return fetch(url, {
+        method: 'POST', 
+        body: JSON.stringify(obj) , 
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      })
+      .then(console.log('postat tid och user till servern'))
+      .then(res => res.json())
+      .catch(error => console.error('Error:', error))
+
+    });
+  }
+
+  getEventSinceLastTime() {
+    let username = localStorage.getItem('username');
+      var url = '/main/dashboard/events';
+      var obj = {'username': username}
+  
+      return fetch(url, {
+        method: 'POST', 
+        body: JSON.stringify(obj) , 
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      })
+      .then(console.log('ska posta o hämta events'))
+      .then(res => res.json())
+      .catch(error => console.error('Error:', error))
+      .then(response => console.log(response))
   }
 
 
@@ -91,6 +133,7 @@ class Dashboard extends Component {
  
 
   componentDidMount() {   
+    this.clickOnSiet();
     let name = localStorage.getItem('username')
     let socket = io();
     socket.on(name, (test) => this.handleData(test)) 
@@ -127,6 +170,7 @@ class Dashboard extends Component {
       .then(response=> this.saveOrganizations(response))
       .then(response => { return this.postUserToServer()})
       .then(test => {return this.jj()})
+      .then(events => {return this.getEventSinceLastTime()})
     }
     
   }

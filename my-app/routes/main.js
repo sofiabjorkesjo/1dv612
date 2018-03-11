@@ -9,6 +9,7 @@ let router = require('express').Router();
 let passport = require('passport');
 let request = require('request');
 let orgsSchema = require('../models/organisations');
+let timeSchema = require('../models/time');
 let env = require('env2')('.env');
 let nodemailer = require('nodemailer');
 let access_token;
@@ -18,6 +19,8 @@ let username;
 let savedOrgs = [];
 let webhooksName = [];
 let allUsers = [];
+let events = [];
+
 
 function findAllUsers(req, res) {
     orgsSchema.find({}, function(err, users) {
@@ -161,6 +164,226 @@ router.post('/webhook', function(req, res) {
             }
         })
     }
+})
+router.post('/dashboard/events', function(req, res) {
+    console.log('IWIWIIWI');
+    request('https://api.github.com/orgs/sofiasorganisationtest/events', {
+        method: 'GET',
+        headers: {
+            'User-Agent': 'sofiabjorkesjo'
+        }
+    }, function(error, result, body) {
+        let parsedBody;
+        if(error) {
+            console.log('nu blev det fel');
+            console.log(error);
+        } else {
+            console.log('najs :D ');
+            parsedBody = JSON.parse(body);
+            console.log(parsedBody[0].type);
+            console.log('--------')
+            timeSchema.findOne({username: req.body.username}, function(err, user) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log('iiiiii');
+                    console.log(user);
+                }
+            })
+            orgsSchema.findOne({username: req.body.username}, function(err, username) {
+                if(err) {
+                    console.log('fel !!');
+                    console.log(err);
+                } else {
+                    console.log('hittade denna: ');
+                    console.log(username.organisations);
+                    username.organisations.forEach(function(org) {
+                        if(org.includes('issues')) {
+                            console.log('issues !');
+                            for(let i = 0; i < parsedBody.length; i ++) {
+                                if(parsedBody[i].type == 'IssuesEvent' && parsedBody[i].created_at > "2018-03-07T19:40:00Z") {
+                                    console.log('aaaaaa :D');
+                                    events.push(parsedBody[i]);    
+                                }
+                            }        
+                        }
+
+                        if(org.includes('push')) {
+                            console.log('push !');
+                            for(let i = 0; i < parsedBody.length; i ++) {
+                                if(parsedBody[i].type == 'CreateEvent' && parsedBody[i].created_at > "2018-03-07T19:40:00Z") {
+                                    console.log('bbbb :D');
+                                    events.push(parsedBody[i]);    
+                                }
+                            }  
+                        }
+
+                        if(org.includes('release')) {
+                            console.log('release !');
+                            for(let i = 0; i < parsedBody.length; i ++) {
+                                if(parsedBody[i].type == 'ReleaseEvent' && parsedBody[i].created_at > "2018-03-07T19:40:00Z") {
+                                    console.log('cccc :D');
+                                    events.push(parsedBody[i]);    
+                                }
+                            } 
+                        }
+                        console.log('ooo');
+                        console.log(events.length);
+                        console.log('öö')
+                        
+                        //res.send({'test': 'hej ska skicka events', 'events': events}); 
+                    })
+                    res.send({'events': events});
+
+                }
+            })
+        }
+    });
+
+    //res.send({'test': 'hej ska skicka events', 'events': events});    
+})
+
+
+router.post('/dashboard/active', function(req, res) {
+    console.log('testtest hej hej');
+    console.log(req.body);
+    timeSchema.findOneAndUpdate({username: req.body.username}, {new: true}, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else {
+            if(user == null) {
+                let time = new timeSchema({
+                    time: req.body.time,
+                    username: req.body.username
+                });
+            
+                time.save(function(err, user) {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log('sparat i databsen!')
+                        console.log(user);
+                        // request('https://api.github.com/orgs/sofiasorganisationtest/events', {
+                        //     method: 'GET',
+                        //     headers: {
+                        //         'User-Agent': 'sofiabjorkesjo'
+                        //     }
+                        // }, function(error, result, body) {
+                        //     let parsedBody;
+                        //     if(error) {
+                    
+                        //         console.log('nu blev det fel');
+                        //         console.log(error);
+                        //     } else {
+                        //         console.log('najs :D ');
+                        //         parsedBody = JSON.parse(body);
+                        //         console.log(parsedBody[0].type);
+                        //         //console.log(result.body.length);
+                        //         //console.log(result.body.find('type' === 'issuesEvent'))
+                        //         console.log('--------')
+                        //         orgsSchema.findOne({username: req.body.username}, function(err, username) {
+                        //             if(err) {
+                        //                 console.log('fel !!');
+                        //                 console.log(err);
+                        //             } else {
+                        //                 console.log('hittade denna: ');
+                        //                 console.log(username.organisations);
+                        //                 username.organisations.forEach(function(org) {
+                        //                     if(org.includes('issues')) {
+                        //                         console.log('issues !');
+                        //                         console.log(parsedBody[0].created_at);
+                                                
+                        //                         for(let i = 0; i < parsedBody.length; i ++) {
+                        //                             if(parsedBody[i].type == 'IssuesEvent') {
+                        //                                 console.log('aaaaaa :D');
+                                                        
+                        //                             }
+                        //                         }
+                        //                     }
+
+                        //                     if(org.includes('push')) {
+                        //                         console.log('push !');
+                        //                     }
+
+                        //                     if(org.includes('release')) {
+                        //                         console.log('release !');
+                        //                     }
+                        //                 })
+
+                        //             }
+                        //         })
+                        //     }
+                        // });
+                    }
+                })  
+            } else {
+                console.log('finns ');
+                console.log(user);
+                // request('https://api.github.com/orgs/sofiasorganisationtest/events', {
+                //     method: 'GET',
+                //     headers: {
+                //         'User-Agent': 'sofiabjorkesjo'
+                //     }
+                // }, function(error, result, body) {
+                //     let parsedBody;
+                //     if(error) {
+            
+                //         console.log('nu blev det fel');
+                //         console.log(error);
+                //     // } else {
+                //     //     console.log('najs :D ');
+                //     //     //console.log(result);
+                        
+                //     // }
+                // } else {
+                //     console.log('najs :D ');
+                //     parsedBody = JSON.parse(body);
+                //     console.log(parsedBody[0].type);
+                //     //console.log(result.body.length);
+                //     //console.log(result.body.find('type' === 'issuesEvent'))
+                //     console.log('--------')
+                //     orgsSchema.findOne({username: req.body.username}, function(err, username) {
+                //         if(err) {
+                //             console.log('fel !!');
+                //             console.log(err);
+                //         } else {
+                //             console.log('hittade denna: ');
+                //             console.log(username.organisations);
+                //             username.organisations.forEach(function(org) {
+                //                 if(org.includes('issues')) {
+                //                     console.log('issues !');
+                //                     console.log(parsedBody[0].created_at);
+                                    
+                //                     for(let i = 0; i < parsedBody.length; i ++) {
+                //                         //hämta det sparade datumet och sätt in istället -->
+                //                         //testa att skicka nått tillbaka till klienten o bara skriv ut de första gången sidan visas.
+                //                         //sedan skicka detta.
+        
+                //                         if(parsedBody[i].type == 'IssuesEvent' && parsedBody[i].created_at > "2018-03-07T19:40:00Z") {
+                //                            // console.log(parsedBody[i]);
+                //                             events.push(parsedBody[i]);
+                                        
+                //                         }
+                //                     }
+                //                     console.log(events);
+                //                 }
+
+                //                 if(org.includes('push')) {
+                //                     console.log('push !');
+                //                 }
+
+                //                 if(org.includes('release')) {
+                //                     console.log('release !');
+                //                 }
+                //             })
+
+                //         }
+                //     })
+                // }
+                // });
+            }
+        }
+    })
 })
 
 
