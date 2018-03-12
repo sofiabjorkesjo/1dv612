@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { RadioGroup, RadioButton } from 'react-radio-buttons';
-import { SSL_OP_CISCO_ANYCONNECT } from 'constants';
 import Checkbox from 'rc-checkbox'
 
 class Settings extends Component {
@@ -97,7 +95,7 @@ class Settings extends Component {
   }
 
   onChange(e) {
-    if(e.target.checked == true) {
+    if(e.target.checked === true) {
       if(this.checkedBoxes.includes(e.target.name)) {
         console.log('finns')
       } else {
@@ -106,10 +104,10 @@ class Settings extends Component {
       }   
     }
 
-    if(e.target.checked == false) {
+    if(e.target.checked === false) {
       if(this.checkedBoxes.includes(e.target.name)) {
         for(let i = 0; i < this.checkedBoxes.length; i++) {
-          if(this.checkedBoxes[i] == e.target.name) {
+          if(this.checkedBoxes[i] === e.target.name) {
             this.checkedBoxes.splice([i], 1)
           }
         }

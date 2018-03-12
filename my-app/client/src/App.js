@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 import Settings from './views/Settings';
-import { POINT_CONVERSION_COMPRESSED } from 'constants';
 import Dashboard from './views/Dashboard'
-import {Redirect} from 'react-router';
 
 
 

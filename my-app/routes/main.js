@@ -44,10 +44,10 @@ function findAllUsers(req, res) {
 
 findAllUsers();
 io.on('connection', function(socket) {
-    console.log('connectade till sockets');   
-   // console.log(allUsers); 
+console.log('connectade till sockets');   
+   //console.log(allUsers); 
     allUsers.forEach(function(element) {
-       // console.log('hej: ' + element.username);
+        //console.log('hej: ' + element.username);
         socket.join(element.username);
     });
 })
@@ -70,7 +70,8 @@ router.post('/webhook', function(req, res) {
             'organization': req.body.organization.login,
             'repository': req.body.repository.name,
             'user': req.body.issue.user.login,
-            'date': req.body.issue.created_at
+            'date': req.body.issue.created_at,
+            'id': req.body.issue.id
 
         }
         console.log('ett nytt issue');
@@ -104,6 +105,15 @@ router.post('/webhook', function(req, res) {
     }
     
     if(req.body.ref) {
+      
+            let pushObj = {
+                'event': 'push',
+                'subject': 'New push',
+                'date': req.body.updated_at,
+                'user': req.body.pusher.name,
+                'id': req.body.commits.id
+    
+            }
         console.log('new push här');
         eventPush = 'push ';
         let organisation = req.body.repository.organization;
@@ -114,7 +124,7 @@ router.post('/webhook', function(req, res) {
                 console.log(err);
             } else {
                 console.log('DESSA MATCHAR');
-                console.log(result);
+                //console.log(result);
                 let usernames = [];
                 let email = [];
                 for(let i = 0; i < result.length; i++) {
@@ -123,7 +133,7 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
-                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! Nytt push event!');
+                    io.sockets.in(element).emit(element, pushObj);
                 })
 
                 email.forEach(function(element) {
@@ -145,7 +155,7 @@ router.post('/webhook', function(req, res) {
                 console.log(err);
             } else {
 
-                console.log(result);
+                //console.log(result);
                 let usernames = [];
                 let email = [];
                 for(let i = 0; i < result.length; i++) {
@@ -166,10 +176,15 @@ router.post('/webhook', function(req, res) {
     }
 })
 router.post('/dashboard/events', function(req, res) {
-
+    events = [];
     let time;
     let timeString;
     let savedTime;
+
+    console.log('aasasadad');
+    console.log(allUsers);
+    console.log('lllll');
+    console.log(req.body.username);
     
     request('https://api.github.com/orgs/sofiasorganisationtest/events', {
         method: 'GET',
@@ -199,17 +214,23 @@ router.post('/dashboard/events', function(req, res) {
    
                     console.log(err);
                 } else {
-             
-                    console.log(username.organisations);
+                    console.log('aaaaaaaaaaaaaa ------')
+                    console.log(username)
+                   // console.log(username.organisations);
                     username.organisations.forEach(function(org) {
                         if(org.includes('issues')) {
                             console.log('issues !');
+                            //console.log(savedTime);
     
                             for(let i = 0; i < parsedBody.length; i ++) {
+                                console.log(savedTime);
                                 if(parsedBody[i].type === 'IssuesEvent' && parsedBody[i].created_at > savedTime) {
                                     console.log('aaaaaa :D');
-                                    console.log(parsedBody[i].created_at);
-                                    events.push(parsedBody[i]);    
+                                    events.push(parsedBody[i]);
+                
+
+                    
+                                       
                                 }
                             }        
                         }
@@ -218,7 +239,7 @@ router.post('/dashboard/events', function(req, res) {
                             console.log('push !');
                             for(let i = 0; i < parsedBody.length; i ++) {
                                 if(parsedBody[i].type == 'PushEvent' && parsedBody[i].created_at > savedTime) {
-                                    console.log('bbbb :D');
+                                    //console.log('bbbb :D');
                                     events.push(parsedBody[i]);    
                                 }
                             }  
@@ -235,7 +256,9 @@ router.post('/dashboard/events', function(req, res) {
                         }
                       
                     })
-                    res.send({'events': events});
+                    console.log('slutet');
+                    console.log(events);
+                    res.send({'events': events, 'user': req.body.username});
 
                 }
             })
@@ -262,12 +285,12 @@ router.post('/dashboard/active', function(req, res) {
                         console.log(err);
                     } else {
                         console.log('sparat i databsen!')
-                        console.log(user);
+                        //console.log(user);
                     }
                 })  
             } else {
                 console.log('finns ');
-                console.log(user);
+                //console.log(user);
                 
             }
         }
@@ -357,7 +380,7 @@ function getHooks(){
             console.log(err)
         } else {
             console.log('rätt')
-            console.log(res)
+            //console.log(res)
         }
     } 
 
@@ -401,7 +424,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://0f7b6e04.ngrok.io/main/webhook',
+                'url': 'http://6634c4b3.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })
@@ -501,6 +524,7 @@ function sendEmail(email, subject) {
                     'orgs': user.organisations,
                     'user': user.username
                  }
+                 console.log('här');
                 console.log(result)
                 res.send(result)
             }

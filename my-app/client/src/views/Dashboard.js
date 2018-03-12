@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router';
 import io from "socket.io-client";
 
 class Dashboard extends Component {  
@@ -16,9 +15,12 @@ class Dashboard extends Component {
       events: []  
     }
     this.testArray = [];
+    this.testArray.push(<h3 className="h3">New events</h3>)
     this.handleData = this.handleData.bind(this);
+
     
   }
+
 
   clickOnSiet() {
     document.addEventListener('click', function() {
@@ -58,14 +60,31 @@ class Dashboard extends Component {
       .then(console.log('ska posta o hämta events'))
       .then(res => res.json())
       .catch(error => console.error('Error:', error))
-     // .then(response => this.setState({events: response.type}))
-     //.then(response => console.log(response.events[0].type))
-     .then(response => {
-       let arr = [];
-       response.events.forEach(function(element) {
-         console.log(element);
-         arr.push(<div><p>{element.type}</p> <p>{element.created_at}</p></div>)
+      .then(response => {
+        let min = 1;
+        let max = 10000;
+        let random = min + Math.random() * (max - min);
+        let arr = [];
+        arr.push(<h3 className="h3">Events since last login</h3>)
+        if(response) {
+
+        
+        response.events.forEach(function(element) {
+          console.log(element);
+          if(element.type === 'IssuesEvent') {
+            arr.push(<span className="span" key={element.actor.id + 1} ><p className="subject" key={element.actor.id}>Issue</p> <p className="date" key={element.actor.id + 2} >{element.created_at}</p></span>)
+           } 
+          if(element.type === 'PushEvent') {
+            arr.push(<span className="span" key={element.actor.id + 1}><p  className="subject" key={element.actor.id}>Push</p> <p  className="date" key={element.actor.id + 2}>{element.created_at}</p></span>)
+          }
+           if(element.type === 'ReleaseEvent') {
+            arr.push(<span className="span" key={element.actor.id}><p  className="subject" key={element.actor.id + 2 }>Release</p> <p className="date" key={element.actor.id + 3}>{element.created_at}</p></span>)
+           }
+          
+
+         
        })
+      }
        console.log(arr);
        this.setState({events: arr})
      })
@@ -73,7 +92,6 @@ class Dashboard extends Component {
 
 
   saveOrganizations(obj) {
-    console.log('först detta');
     if(obj) {
       let orgs = [];
       let orgsLocalStorage = [];
@@ -115,8 +133,10 @@ class Dashboard extends Component {
 
   handleData(data){
     console.log(':D');
-
-    if(data.event = 'issue') {
+    console.log(data);
+    //this.testArray.push(<h3 className="h3">New events</h3>)
+    if(data.event == 'issue') {
+      console.log(data);
       let subject = data.subject;
       let action = data.action;
       let title = data.title;
@@ -124,11 +144,21 @@ class Dashboard extends Component {
       let repository = data.repository;
       let user = data.user;
       let date = data.date;
+      let id = data.id;
 
-      let min = 1;
-      let max = 3000;
-      let random = min + Math.random() * (max - min);
-      this.testArray.push(<div key={random} className="notificationDiv"><p key={random} className="date">{date}</p><p key={random} className="subject">{subject}</p><p key={random} className="title"><span key={random} className="titleName">{title}</span>{' by '}{user}</p></div>);
+      
+      this.testArray.push(<div key={id} className="notificationDiv"><p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject}</p><p key={id + 3} className="title"><span key={id + 4} className="titleName">{title}</span>{' by '}{user}</p></div>);
+      this.setState({notifications: subject});
+    }
+    if(data.event == 'push') {
+      console.log(data.user + 'funkar ara r r' + data.subject);
+
+      let subject = data.subject;
+      let date = data.date;
+      let user = data.user
+      let id = data.id;
+
+      this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject}</p><p key={id +3} className="titleName">{'by ' + user}</p></div>)
       this.setState({notifications: subject});
     }
 
@@ -148,6 +178,7 @@ class Dashboard extends Component {
     let name = localStorage.getItem('username')
     let socket = io();
     socket.on(name, (test) => this.handleData(test)) 
+   
 
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
