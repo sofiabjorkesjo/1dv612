@@ -66,8 +66,9 @@ class Dashboard extends Component {
         let random = min + Math.random() * (max - min);
         let arr = [];
         arr.push(<h3 className="h3">Events since last login</h3>)
+        
         if(response) {
-
+        
         
         response.events.forEach(function(element) {
           console.log(element);

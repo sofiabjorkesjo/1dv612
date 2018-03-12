@@ -20,6 +20,8 @@ let savedOrgs = [];
 let webhooksName = [];
 let allUsers = [];
 let events = [];
+let allorgs = [];
+let allorgs2 = [];
 
 
 function findAllUsers(req, res) {
@@ -32,17 +34,81 @@ function findAllUsers(req, res) {
                     'username': users[i].username,
                     'email': users[i].email
                 }
+
+             
                 allUsers.push(obj);
+          
+
             }
-           // console.log('test test ')
-          //  console.log(allUsers);
+            console.log('test test ')
+            console.log(allUsers);
+
             return allUsers;
+        }
+    })
+}
+
+function findallorgs() {
+    orgsSchema.find({}, function(err, users) {
+        if (err) {
+            console.log(err);
+        } else {
+            for(let i = 0; i < users.length; i++) {
+
+                let orgs = {
+                    'org': users[i].organisations
+                }
+
+                allorgs.push(orgs);
+
+            }
+     
+
+
+            allorgs.forEach(function(user) {
+                //console.log('gggggggggg');
+                //console.log(user.org);
+                user.org.forEach(function(value) {
+
+                    if(value.includes('push')) {
+                        let result = value.substring(5);
+                        
+                        if(allorgs2.includes(result)) {
+                            console.log('redan');
+                        } else {
+                            allorgs2.push(result);
+                        }
+                    }
+
+                    if(value.includes('issues')) {
+                        let result = value.substring(7);
+                        if(allorgs2.includes(result)) {
+                            console.log('redan');
+                        } else {
+                            allorgs2.push(result);
+                        }
+                    }
+
+                    if(value.includes('release')) {
+                        let result = value.substring(8);
+                        if(allorgs2.includes(result)) {
+                            console.log('redan');
+                        } else {
+                            allorgs2.push(result);
+                        }
+                    }
+                 
+                    
+                })
+            })
+            return allorgs;
         }
     })
 }
 
 
 findAllUsers();
+findallorgs();
 io.on('connection', function(socket) {
 console.log('connectade till sockets');   
    //console.log(allUsers); 
@@ -186,6 +252,8 @@ router.post('/webhook', function(req, res) {
         })
     }
 })
+
+
 router.post('/dashboard/events', function(req, res) {
     events = [];
     let time;
@@ -276,6 +344,7 @@ router.post('/dashboard/events', function(req, res) {
         }
     });  
 })
+
 
 
 router.post('/dashboard/active', function(req, res) {
@@ -405,18 +474,21 @@ function createWebhook() {
         if(element.includes('issues')) {
             let str = element;
             result = str.substring(7);
+            savedOrgs.push(result);
             console.log('issues finns med i meningen');
             events.push('issues');
             console.log(result);
         } else if(element.includes('push')) {
             let str = element;
             result = str.substring(5);
+            savedOrgs.push(result);
             events.push('push')
             console.log('push finns med i meningen');
             console.log(result)
         } else if (element.includes('release')) {
             let str = element;
             result = str.substring(8);
+            savedOrgs.push(result);
             events.push('release');
             console.log('release finns med i meningen');
             console.log(result);
@@ -435,7 +507,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://6634c4b3.ngrok.io/main/webhook',
+                'url': 'http://0850076b.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })
