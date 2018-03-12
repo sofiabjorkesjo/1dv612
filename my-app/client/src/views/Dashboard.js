@@ -151,7 +151,7 @@ class Dashboard extends Component {
       this.setState({notifications: subject});
     }
     if(data.event == 'push') {
-      console.log(data.user + 'funkar ara r r' + data.subject);
+   
 
       let subject = data.subject;
       let date = data.date;
@@ -161,6 +161,19 @@ class Dashboard extends Component {
       this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject}</p><p key={id +3} className="titleName">{'by ' + user}</p></div>)
       this.setState({notifications: subject});
     }
+
+    if(data.event == 'release') {
+      let subject = data.subject
+      let date = data.date;
+      let user = data.user;
+      let action = data.action;
+      let id = data.id;
+
+      this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject + ' ' + action}</p><p key={id +3} className="titleName">{'by ' + user}</p></div>)
+      this.setState({notifications: subject});
+    }
+
+  
 
 
 

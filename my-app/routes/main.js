@@ -109,7 +109,7 @@ router.post('/webhook', function(req, res) {
             let pushObj = {
                 'event': 'push',
                 'subject': 'New push',
-                'date': req.body.updated_at,
+                'date': req.body.created_at,
                 'user': req.body.pusher.name,
                 'id': req.body.commits.id
     
@@ -145,7 +145,18 @@ router.post('/webhook', function(req, res) {
     }
   
     if(req.body.release) {
+        console.log(req.body);
         console.log('new release');
+      
+        let releaseObj = {
+            'event': 'release',
+            'subject': 'New release',
+            'action': req.body.action,
+            'date': req.body.release.created_at,
+            'user': req.body.release.author.login,
+            'id': req.body.release.author.id
+
+        }
         eventRelease = 'release ';
         let organisation = req.body.organization.login;
         let eventAndOrganisation = eventRelease + organisation;
@@ -164,7 +175,7 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
-                    io.sockets.in(element).emit(element, element+ ' detta är en notikation till dig! En ny release!');
+                    io.sockets.in(element).emit(element, releaseObj);
                 })
 
                 email.forEach(function(element) {
