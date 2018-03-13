@@ -106,12 +106,7 @@ class Dashboard extends Component {
     }
   }
 
-  test() {
-    console.log('sen detta efter'); 
-  }
-
   getOrganizations() {
-    console.log('börjar här')
     var organisations = localStorage.getItem('organisationer');
     var parsedOrganisations = JSON.parse(organisations)
     var orgsArray = [];
@@ -120,9 +115,9 @@ class Dashboard extends Component {
     }
   }
 
-  saveUser(res) {
-    this.setState({name: res.name});
-    this.setState({email: res.email})
+  async saveUser(res) {
+    await this.setState({name: res.name});
+    await this.setState({email: res.email})
 
   }
 
@@ -146,14 +141,11 @@ class Dashboard extends Component {
       let user = data.user;
       let date = data.date;
       let id = data.id;
-
-      
+   
       this.testArray.push(<div key={id} className="notificationDiv"><p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject}</p><p key={id + 3} className="title"><span key={id + 4} className="titleName">{title}</span>{' by '}{user}</p></div>);
       this.setState({notifications: subject});
     }
     if(data.event == 'push') {
-   
-
       let subject = data.subject;
       let date = data.date;
       let user = data.user
@@ -173,14 +165,9 @@ class Dashboard extends Component {
       this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject + ' ' + action}</p><p key={id +3} className="titleName">{'by ' + user}</p></div>)
       this.setState({notifications: subject});
     }
-
-  
-
-
-
   }
 
-  jj() {
+  getNameFromLocalStorage() {
     let name = localStorage.getItem('username')
     let socket = io();
     socket.on(name, (test) => this.handleData(test)) 
@@ -191,6 +178,7 @@ class Dashboard extends Component {
     this.clickOnSiet();
     let name = localStorage.getItem('username')
     let socket = io();
+    console.log('socket här i ');
     socket.on(name, (test) => this.handleData(test)) 
    
 
@@ -225,7 +213,7 @@ class Dashboard extends Component {
       .catch(error => console.log(error))
       .then(response=> this.saveOrganizations(response))
       .then(response => { return this.postUserToServer()})
-      .then(test => {return this.jj()})
+      .then(test => {return this.getNameFromLocalStorage()})
       .then(events => {return this.getEventSinceLastTime()})
     }
     
@@ -237,7 +225,6 @@ class Dashboard extends Component {
   }
 
   getTemporaryCode = () => {
-    //console.log(window.location.search);
     const search = window.location.search;
     const code = search.substring(6);
     return code 
@@ -281,10 +268,6 @@ class Dashboard extends Component {
 
     this.setState({orgs: organisations})
   }
-
- 
-
-
 
   render(props) {
     return (

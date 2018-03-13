@@ -1,13 +1,14 @@
 
 
 
+
 'use strict';
 
 module.exports = function(io) {
 
 let router = require('express').Router();
 let passport = require('passport');
-let request = require('request');
+let request = require('request-promise');
 let orgsSchema = require('../models/organisations');
 let timeSchema = require('../models/time');
 let env = require('env2')('.env');
@@ -111,9 +112,10 @@ findAllUsers();
 findallorgs();
 io.on('connection', function(socket) {
 console.log('connectade till sockets');   
-   //console.log(allUsers); 
+   //console.log(allUsers);
+   console.log('i socket on här') 
     allUsers.forEach(function(element) {
-        //console.log('hej: ' + element.username);
+        console.log('hej: ' + element.username);
         socket.join(element.username);
     });
 })
@@ -123,6 +125,7 @@ router.get('/webhook', function(req, res) {
 })
 
 router.post('/webhook', function(req, res) {
+    console.log('TEST !!!!');
     let eventIssues;
     let eventPush;
     let eventRelease;
@@ -157,6 +160,7 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
+                    console.log('aaaa ' + element);
                     io.sockets.in(element).emit(element, issueObj);
                 })
                 //sendEmail();
@@ -255,98 +259,87 @@ router.post('/webhook', function(req, res) {
 
 
 router.post('/dashboard/events', function(req, res) {
-    events = [];
     let time;
     let timeString;
+    let promises = [];
+    let promise;
+    let allOrgsEvents = [];
     let savedTime;
+    let filterdEvents = [];
 
-    console.log('aasasadad');
-    console.log(allUsers);
-    console.log('lllll');
-    console.log(req.body.username);
-    
-    request('https://api.github.com/orgs/sofiasorganisationtest/events', {
-        method: 'GET',
-        headers: {
-            'User-Agent': 'sofiabjorkesjo'
-        }
-    }, function(error, result, body) {
-        let parsedBody;
-        if(error) {
+    allorgs2.forEach(function(element) {
+        var options = {
+            uri: 'https://api.github.com/orgs/' + element + '/events',
+            headers: {
+                'User-Agent': 'sofiabjorkesjo'
+            }
+        };
+        
+        promise = request(options);
+  
+        promises.push(promise);
+    });
 
-            console.log(error);
-        } else {
-
-            parsedBody = JSON.parse(body);
-           
-            timeSchema.findOne({username: req.body.username}, function(err, user) {
-                if(err) {
-                    console.log(err);
-                } else {
-                    time = user.time;
-                    timeString = JSON.stringify(time);
-                    savedTime = JSON.parse(timeString);
+    Promise.all(promises)
+    .then(function (events) {
+        allOrgsEvents = events.map(event => JSON.parse(event));
+        allOrgsEvents = [].concat.apply([], allOrgsEvents);
+     
+        return timeSchema.findOne({username: req.body.username});
+    })
+    .then(function(user) {
+        time = user.time;
+        timeString = JSON.stringify(time);
+        savedTime = JSON.parse(timeString);
+        return orgsSchema.findOne({username: req.body.username});
+    })
+    .then(function(user) {
+        console.log(user);
+        user.organisations.forEach(function(org) {
+            let date1;
+            let date2;
+            if(org.includes('issues')) {
+                for(let i = 0; i < allOrgsEvents.length; i++) {
+                   // console.log('hello :) ' + allOrgsEvents[i].created_at);
+                    date1 = new Date(allOrgsEvents[i].created_at);
+                    date2 = new Date(savedTime);
+                    if(allOrgsEvents[i].type === 'IssuesEvent' && date1.getTime() > date2.getTime()) {
+                        filterdEvents.push(allOrgsEvents[i])
+                    }
                 }
-            })
-            orgsSchema.findOne({username: req.body.username}, function(err, username) {
-                if(err) {
-   
-                    console.log(err);
-                } else {
-                    console.log('aaaaaaaaaaaaaa ------')
-                    console.log(username)
-                   // console.log(username.organisations);
-                    username.organisations.forEach(function(org) {
-                        if(org.includes('issues')) {
-                            console.log('issues !');
-                            //console.log(savedTime);
-    
-                            for(let i = 0; i < parsedBody.length; i ++) {
-                                console.log(savedTime);
-                                if(parsedBody[i].type === 'IssuesEvent' && parsedBody[i].created_at > savedTime) {
-                                    console.log('aaaaaa :D');
-                                    events.push(parsedBody[i]);
-                
-
+            }
+            if(org.includes('push')) {
+                for(let i = 0; i < allOrgsEvents.length; i++) {
+                    date1 = new Date(allOrgsEvents[i].created_at);
                     
-                                       
-                                }
-                            }        
-                        }
-
-                        if(org.includes('push')) {
-                            console.log('push !');
-                            for(let i = 0; i < parsedBody.length; i ++) {
-                                if(parsedBody[i].type == 'PushEvent' && parsedBody[i].created_at > savedTime) {
-                                    //console.log('bbbb :D');
-                                    events.push(parsedBody[i]);    
-                                }
-                            }  
-                        }
-
-                        if(org.includes('release')) {
-                            console.log('release !');
-                            for(let i = 0; i < parsedBody.length; i ++) {
-                                if(parsedBody[i].type == 'ReleaseEvent' && parsedBody[i].created_at > savedTime) {
-                                    console.log('cccc :D');
-                                    events.push(parsedBody[i]);    
-                                }
-                            } 
-                        }
-                      
-                    })
-                    console.log('slutet');
-                    console.log(events);
-                    res.send({'events': events, 'user': req.body.username});
-
+                    date2 = new Date(savedTime);
+                    if(allOrgsEvents[i].type === 'PushEvent' && date1.getTime() > date2.getTime()) {
+                        filterdEvents.push(allOrgsEvents[i])
+                    }
                 }
-            })
+            }
+            //console.log(savedTime + ' :DDD')
+            if(org.includes('release')) {
+                for(let i = 0; i < allOrgsEvents.length; i++) {
+                    date1 = new Date(allOrgsEvents[i].created_at);
+                    date2 = new Date(savedTime);
+                    
+                    if(allOrgsEvents[i].type === 'ReleaseEvent' && date1.getTime() > date2.getTime()) {
+                        filterdEvents.push(allOrgsEvents[i])
+                    }
+                }
+            }
+        })
+        for(let i = 0; i < filterdEvents.length; i ++) {
+            //console.log(filterdEvents[i].created_at + '  :DDD')
         }
-    });  
+        console.log('dadsadada');
+        console.log(filterdEvents.length);
+        res.send({'events': filterdEvents, 'user': req.body.username})
+    });
 })
 
-
-
+    
 router.post('/dashboard/active', function(req, res) {
     console.log('testtest hej hej');
     console.log(req.body);
@@ -380,7 +373,7 @@ router.post('/dashboard/active', function(req, res) {
 
 
 router.get('/:code', function (req, res, next) {
-    //window.location.reload(true);
+
     let temporaryCode = req.url.substring(1);
    
     request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
@@ -507,7 +500,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://0850076b.ngrok.io/main/webhook',
+                'url': 'http://149c6cdd.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })
@@ -619,6 +612,5 @@ function sendEmail(email, subject) {
 
 return router;
 
-//module.exports = router;
 
 }

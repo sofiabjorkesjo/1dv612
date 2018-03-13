@@ -30,15 +30,13 @@ import Dashboard from './views/Dashboard'
   
 
    logoutFunction() {
-    var test = document.getElementById("test").onClick(console.log('sss'));
-    this.test.onClick(console.log('klick!'));
+    localStorage.removeItem('username'); 
+    localStorage.removeItem('organisationer');
+    localStorage.removeItem('email');
+    localStorage.removeItem('time');
  
    }
 
-   testar() {
-    localStorage.removeItem('username'); 
-    localStorage.removeItem('organisationer');
-   }
 
   link = 'https://github.com/login/oauth/authorize/?scope=admin:org_hook,repo,user&client_id=80168115df9ea9d87e1f';
   logOut = '/';
