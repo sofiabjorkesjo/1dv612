@@ -24,7 +24,6 @@ class Dashboard extends Component {
 
   clickOnSiet() {
     document.addEventListener('click', function() {
-      console.log('du klickade');
       localStorage.setItem('time', new Date());
       let time = localStorage.getItem('time');
       let username = localStorage.getItem('username');
@@ -38,7 +37,6 @@ class Dashboard extends Component {
           'Content-Type': 'application/json'
         })
       })
-      .then(console.log('postat tid och user till servern'))
       .then(res => res.json())
       .catch(error => console.error('Error:', error))
 
@@ -57,7 +55,6 @@ class Dashboard extends Component {
           'Content-Type': 'application/json'
         })
       })
-      .then(console.log('ska posta o hämta events'))
       .then(res => res.json())
       .catch(error => console.error('Error:', error))
       .then(response => {
@@ -71,22 +68,20 @@ class Dashboard extends Component {
         
         
         response.events.forEach(function(element) {
-          console.log(element);
           if(element.type === 'IssuesEvent') {
             arr.push(<span className="span" key={element.actor.id + 1} ><p className="subject" key={element.actor.id}>Issue</p> <p className="date" key={element.actor.id + 2} >{element.created_at}</p></span>)
            } 
           if(element.type === 'PushEvent') {
             arr.push(<span className="span" key={element.actor.id + 1}><p  className="subject" key={element.actor.id}>Push</p> <p  className="date" key={element.actor.id + 2}>{element.created_at}</p></span>)
           }
-           if(element.type === 'ReleaseEvent') {
-            arr.push(<span className="span" key={element.actor.id}><p  className="subject" key={element.actor.id + 2 }>Release</p> <p className="date" key={element.actor.id + 3}>{element.created_at}</p></span>)
+           if(element.type === 'ReleaseEvent' || element.type === 'CreateEvent') {
+            arr.push(<span className="span" key={element.actor.id}><p  className="subject" key={element.actor.id + 2 }>Release</p> <p className="date" key={element.actor.id + 3}>{element.created_at}</p> <p className="orgNotification" key={element.actor.id + 4}>{element.org.login}</p></span>)
            }
           
 
          
        })
       }
-       console.log(arr);
        this.setState({events: arr})
      })
   }
@@ -101,7 +96,6 @@ class Dashboard extends Component {
         orgsLocalStorage.push(obj[i].login)
       }
       localStorage.setItem('organisationer', JSON.stringify(orgsLocalStorage))
-      console.log('klar här');
 
     }
   }
@@ -121,18 +115,8 @@ class Dashboard extends Component {
 
   }
 
-
-  toParent = () => {
-    var info = this.theTemporaryCode()
-    this.props.callbackFromParent(info);
-  }
-
   handleData(data){
-    console.log(':D');
-    console.log(data);
-    //this.testArray.push(<h3 className="h3">New events</h3>)
     if(data.event == 'issue') {
-      console.log(data);
       let subject = data.subject;
       let action = data.action;
       let title = data.title;
@@ -151,7 +135,7 @@ class Dashboard extends Component {
       let user = data.user
       let id = data.id;
 
-      this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject}</p><p key={id +3} className="titleName">{'by ' + user}</p></div>)
+      this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject}</p><p key={id +3} className="title">{'by ' + user}</p></div>)
       this.setState({notifications: subject});
     }
 
@@ -162,7 +146,7 @@ class Dashboard extends Component {
       let action = data.action;
       let id = data.id;
 
-      this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject + ' ' + action}</p><p key={id +3} className="titleName">{'by ' + user}</p></div>)
+      this.testArray.push(<div key={id} className="notificationDiv"> <p key={id + 1} className="date">{date}</p><p key={id + 2} className="subject">{subject + ' ' + action}</p><p key={id +3} className="title">{'by ' + user}</p></div>)
       this.setState({notifications: subject});
     }
   }
@@ -178,17 +162,14 @@ class Dashboard extends Component {
     this.clickOnSiet();
     let name = localStorage.getItem('username')
     let socket = io();
-    console.log('socket här i ');
     socket.on(name, (test) => this.handleData(test)) 
    
 
     if(localStorage.getItem('username')) {  
       var username = localStorage.getItem('username')
       this.setState({name: username})
-      //this.getOrganizations() 
       this.postUserToServer()     
     } else {
-      this.toParent()
       this.props.routes()
       this.callApi()
       .then(res => this.setState({response: res.express.substring(13, 53)}))
@@ -253,7 +234,6 @@ class Dashboard extends Component {
         'Content-Type': 'application/json'
       })
     })
-    .then(console.log('postat till server'))
     .then(res => res.json())
     .catch(error => console.error('Error:', error))
     .then(response => {return this.setOrganisations(response.orgs)})
@@ -270,11 +250,20 @@ class Dashboard extends Component {
   }
 
   render(props) {
+      if(!localStorage.getItem('username')) {
+      return(
+        <div>
+          <p>You need to login</p>
+          </div>
+      );
+    } else {
+
     return (
       <div className="DashboardsDiv">
       
         <div className="loggedInAs">
           <p>You are logged in as {this.state.name}</p>
+          <p>If you have a gmail account on your github profile, then you will get notifications to your email.</p>
         </div>
         
         <div className="orgs">
@@ -287,8 +276,10 @@ class Dashboard extends Component {
          
           <div>{this.testArray}</div>
         </div>
+        <p>{this.props.loggedIn} aaaa</p>
       </div>
         );
+      }
       }   
 }
 

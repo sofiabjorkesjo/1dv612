@@ -28,22 +28,15 @@ let allorgs2 = [];
 function findAllUsers(req, res) {
     orgsSchema.find({}, function(err, users) {
         if (err) {
-            console.log(err);
+            res.status(404).send({'error':err, 'message': 'Not found'});
         } else {
             for(let i = 0; i < users.length; i++) {
                 let obj = {
                     'username': users[i].username,
                     'email': users[i].email
                 }
-
-             
                 allUsers.push(obj);
-          
-
             }
-            console.log('test test ')
-            console.log(allUsers);
-
             return allUsers;
         }
     })
@@ -52,30 +45,21 @@ function findAllUsers(req, res) {
 function findallorgs() {
     orgsSchema.find({}, function(err, users) {
         if (err) {
-            console.log(err);
+            res.status(404).send({'error': err, 'message': 'Not found'});
         } else {
             for(let i = 0; i < users.length; i++) {
-
                 let orgs = {
                     'org': users[i].organisations
                 }
-
                 allorgs.push(orgs);
-
             }
      
-
-
             allorgs.forEach(function(user) {
-                //console.log('gggggggggg');
-                //console.log(user.org);
                 user.org.forEach(function(value) {
-
                     if(value.includes('push')) {
-                        let result = value.substring(5);
-                        
+                        let result = value.substring(5);              
                         if(allorgs2.includes(result)) {
-                            console.log('redan');
+                            console.log('finns redan');
                         } else {
                             allorgs2.push(result);
                         }
@@ -84,7 +68,7 @@ function findallorgs() {
                     if(value.includes('issues')) {
                         let result = value.substring(7);
                         if(allorgs2.includes(result)) {
-                            console.log('redan');
+                            console.log('finns redan');
                         } else {
                             allorgs2.push(result);
                         }
@@ -97,9 +81,7 @@ function findallorgs() {
                         } else {
                             allorgs2.push(result);
                         }
-                    }
-                 
-                    
+                    } 
                 })
             })
             return allorgs;
@@ -112,10 +94,7 @@ findAllUsers();
 findallorgs();
 io.on('connection', function(socket) {
 console.log('connectade till sockets');   
-   //console.log(allUsers);
-   console.log('i socket on här') 
     allUsers.forEach(function(element) {
-        console.log('hej: ' + element.username);
         socket.join(element.username);
     });
 })
@@ -125,7 +104,6 @@ router.get('/webhook', function(req, res) {
 })
 
 router.post('/webhook', function(req, res) {
-    console.log('TEST !!!!');
     let eventIssues;
     let eventPush;
     let eventRelease;
@@ -143,14 +121,12 @@ router.post('/webhook', function(req, res) {
             'id': req.body.issue.id
 
         }
-        console.log('ett nytt issue');
-        console.log(issueObj);
         eventIssues = 'issues ';
         let organisation = req.body.organization.login;
         let eventAndOrganisation = eventIssues + organisation;
         orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
             if(err) {
-                console.log(err);
+                res.send({'error':err});
             } else {
                 let usernames = [];
                 let email = [];
@@ -160,13 +136,11 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
-                    console.log('aaaa ' + element);
                     io.sockets.in(element).emit(element, issueObj);
                 })
-                //sendEmail();
                 email.forEach(function(element) {
-                    let issue = 'en ny issue!'
-                    //sendEmail(element, issue);
+                    let issue = ' en ny issue!'
+                    sendEmail(element, issue);
                 })
 
                 
@@ -174,27 +148,23 @@ router.post('/webhook', function(req, res) {
         })
     }
     
-    if(req.body.ref) {
-      
-            let pushObj = {
-                'event': 'push',
-                'subject': 'New push',
-                'date': req.body.created_at,
-                'user': req.body.pusher.name,
-                'id': req.body.commits.id
-    
-            }
-        console.log('new push här');
+    if(req.body.ref) { 
+        let pushObj = {
+            'event': 'push',
+            'subject': 'New push',
+            'date': req.body.created_at,
+            'user': req.body.pusher.name,
+            'id': req.body.commits.id
+
+        }
         eventPush = 'push ';
         let organisation = req.body.repository.organization;
         let eventAndOrganisation = eventPush + organisation;
         console.log(eventAndOrganisation);
         orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
             if(err) {
-                console.log(err);
+                res.send({'error':err});
             } else {
-                console.log('DESSA MATCHAR');
-                //console.log(result);
                 let usernames = [];
                 let email = [];
                 for(let i = 0; i < result.length; i++) {
@@ -207,16 +177,14 @@ router.post('/webhook', function(req, res) {
                 })
 
                 email.forEach(function(element) {
-                    let push = 'nytt push event!'
-                    //sendEmail(element, push);
+                    let push = ' nytt push event!'
+                    sendEmail(element, push);
                 })
             }
         })
     }
   
     if(req.body.release) {
-        console.log(req.body);
-        console.log('new release');
       
         let releaseObj = {
             'event': 'release',
@@ -233,10 +201,8 @@ router.post('/webhook', function(req, res) {
         console.log(eventAndOrganisation);
         orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
             if(err) {
-                console.log(err);
+                res.send({'error':err});
             } else {
-
-                //console.log(result);
                 let usernames = [];
                 let email = [];
                 for(let i = 0; i < result.length; i++) {
@@ -250,7 +216,7 @@ router.post('/webhook', function(req, res) {
 
                 email.forEach(function(element) {
                     let release = 'ny release!'
-                    //sendEmail(element, release);
+                    sendEmail(element, release);
                 })
             }
         })
@@ -341,8 +307,6 @@ router.post('/dashboard/events', function(req, res) {
 
     
 router.post('/dashboard/active', function(req, res) {
-    console.log('testtest hej hej');
-    console.log(req.body);
     timeSchema.findOneAndUpdate({username: req.body.username},{time: req.body.time}, {new: true}, function(err, user) {
         if (err) {
             console.log(err);
@@ -358,13 +322,10 @@ router.post('/dashboard/active', function(req, res) {
                         console.log(err);
                     } else {
                         console.log('sparat i databsen!')
-                        //console.log(user);
                     }
                 })  
             } else {
-                console.log('finns ');
-                //console.log(user);
-                
+                console.log('finns ');               
             }
         }
     })
@@ -373,7 +334,6 @@ router.post('/dashboard/active', function(req, res) {
 
 
 router.get('/:code', function (req, res, next) {
-
     let temporaryCode = req.url.substring(1);
    
     request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
@@ -393,7 +353,6 @@ router.get('/:code', function (req, res, next) {
  });
 
  router.post('/settings', function(req, res) {
-    //getHooks();
     username = req.body.username
     if(req.body.data === undefined) {
         res.send({'message': 'inget att spara'})
@@ -401,12 +360,11 @@ router.get('/:code', function (req, res, next) {
         let orgsArray = req.body.data;
         orgsArray.forEach(element => {       
             if(savedOrgs.includes(element)) {
-                console.log('finns redan')
+                console.log('finns redan sparat i settings')
                } else {
                 savedOrgs.push(element);
                }     
         });
-        //console.log(savedOrgs);
         
         createWebhook()
         orgsSchema.findOneAndUpdate({'username': username},
@@ -442,25 +400,7 @@ router.get('/:code', function (req, res, next) {
     }     
 })
 
-function getHooks(){
-    console.log('HOOKS')
-    let newAccessToken = access_token.substring(13, 53);
-    request('https://api.github.com/orgs/sofiasorganisationtest/hooks?access_token=' + newAccessToken, {
-        method: 'GET'
-    }), function(err, res) {
-        if(err) {
-            console.log('FEEL')
-            console.log(err)
-        } else {
-            console.log('rätt')
-            //console.log(res)
-        }
-    } 
-
-}
-
 function createWebhook() {
-    console.log(savedOrgs);
     savedOrgs.forEach(function(element) {
         let result;
         let events = [];
@@ -468,26 +408,19 @@ function createWebhook() {
             let str = element;
             result = str.substring(7);
             savedOrgs.push(result);
-            console.log('issues finns med i meningen');
             events.push('issues');
-            console.log(result);
         } else if(element.includes('push')) {
             let str = element;
             result = str.substring(5);
             savedOrgs.push(result);
             events.push('push')
-            console.log('push finns med i meningen');
-            console.log(result)
         } else if (element.includes('release')) {
             let str = element;
             result = str.substring(8);
             savedOrgs.push(result);
             events.push('release');
-            console.log('release finns med i meningen');
-            console.log(result);
         }
         webhooksName.push(element)
-        console.log(events);
         let newAccessToken = access_token.substring(13, 53)
         let options = {
             method: 'POST',
@@ -508,10 +441,8 @@ function createWebhook() {
 
         request('https://api.github.com/orgs/'+ result + '/hooks?access_token=' + newAccessToken, options, function(err, res, body) {
             if(err) {
-                console.log('ERROR')
                 console.log(err)
             } else {
-                console.log('BODY')
                 console.log(body)
             }
         })
@@ -548,7 +479,6 @@ var transporter = nodemailer.createTransport({
 });
 
 function sendEmail(email, subject) {
-        console.log(email);
         console.log('sending email!');
         var mailOptions = {
             from: 'sofiiiabjorkesjo@gmail.com',
@@ -581,17 +511,13 @@ function sendEmail(email, subject) {
                 });
                 newUser.save(function(err, user) {
                     if(err) {
-                        console.log('error blev de nu')
-                        console.log(err);
+                        res.send({'error': err});
                     } else {
-                        console.log(user);
-                        console.log('resultatet här');
 
                         let result = {
                             'orgs': '',
                             'user': newUser.username
                         }
-                        console.log(result);
                         res.send(result);
                     }
                 })
@@ -600,8 +526,6 @@ function sendEmail(email, subject) {
                     'orgs': user.organisations,
                     'user': user.username
                  }
-                 console.log('här');
-                console.log(result)
                 res.send(result)
             }
         }

@@ -14,7 +14,6 @@ class Settings extends Component {
   sendUserToServer() {
     var username = localStorage.getItem('username');
     var url = '/main/settings';
-    console.log('tttt');
     var obj = {'username': username}
 
     return fetch(url, {
@@ -38,7 +37,6 @@ class Settings extends Component {
 
       orgsArray.push(<div key={i + 4}><h3 key={i + 1}>{parsedOrgs[i]}</h3><p key={i}>
         <label>
-          
             <Checkbox 
               ref = "test"
               onChange={this.onChange.bind(this)}
@@ -46,13 +44,11 @@ class Settings extends Component {
               name={'issues ' + parsedOrgs[i]} 
             />
             issues
-
           </label>
         </p>
 
         <p key={i + 2}>
-          <label>
-            
+          <label>  
               <Checkbox 
                 ref = "test"
                 onChange={this.onChange.bind(this)}
@@ -60,7 +56,6 @@ class Settings extends Component {
                 name={'push ' + parsedOrgs[i]}
               />
               push
-
             </label>
         </p>
 
@@ -83,24 +78,22 @@ class Settings extends Component {
 
   componentDidMount() {
     this.sendUserToServer()
-    var organisations = localStorage.getItem('organisationer');
-    var parsedOrgs = JSON.parse(organisations);
-    var orgsArray = [];
-    for(let i = 0; i < parsedOrgs.length; i++) {
-      orgsArray.push(<p key={i}>{parsedOrgs[i]}</p>)
-     
+    if(localStorage.getItem('organisationer')) {
+      var organisations = localStorage.getItem('organisationer');
+      var parsedOrgs = JSON.parse(organisations);
+      var orgsArray = [];
+      for(let i = 0; i < parsedOrgs.length; i++) {
+        orgsArray.push(<p key={i}>{parsedOrgs[i]}</p>)
+      }
+      this.setState({orgs: orgsArray})
     }
-    this.setState({orgs: orgsArray})
-
   }
 
   onChange(e) {
     if(e.target.checked === true) {
       if(this.checkedBoxes.includes(e.target.name)) {
-        console.log('finns')
       } else {
         this.checkedBoxes.push(e.target.name)
-        console.log('inte')
       }   
     }
 
@@ -118,16 +111,11 @@ class Settings extends Component {
 
   save(event) {
     event.preventDefault();
-    console.log(this.checkedBoxes);
-    console.log('spara')
     this.sendToServer(this.checkedBoxes)
   }
 
   sendToServer = function(data) {
-
     var url = '/main/settings';
-    console.log('asasas');
-    console.log(data);
     var username = localStorage.getItem('username');
     var email = localStorage.getItem('email');
     var obj = {'data': data, 'username': username, 'email': email}
@@ -144,6 +132,13 @@ class Settings extends Component {
   };
 
   render(props) {
+    if(!localStorage.getItem('username')) {
+      return(
+        <div>
+          <p>You need to login</p>
+          </div>
+      );
+    } else {
     
     return (
       <main>
@@ -153,15 +148,10 @@ class Settings extends Component {
         <input type="Submit" value="submit" readOnly/>
         </form>
       </div>
-
-      
-      <div>
-      </div>
-
-      
-      </main>
+     </main>
         );
-      }    
+      }  
+    }  
 }
 
 export default Settings; 

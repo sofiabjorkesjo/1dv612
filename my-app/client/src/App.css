@@ -41,7 +41,7 @@
   }
   
   .loggedInAs {
-    height: 40px;
+    height: 60px;
     background-color: rgba(226, 226, 226, 0.22);
     margin-bottom: 30px; 
     padding: 10px;
@@ -64,6 +64,7 @@
     margin-bottom: 40px; 
     margin-left: 2%;
     box-shadow: 1px 1px 5px  #999999;
+    overflow: scroll;
   }
   
   .h2 {
@@ -102,6 +103,11 @@
     font-family: Verdana;
     font-size: 10px;
   }
+
+ .orgNotification {
+  font-family: Verdana;
+  font-size: 10px;
+ }
   
   .subject {
     font-family: Verdana;
@@ -136,8 +142,11 @@
     background-color:rgba(226, 226, 226, 0.22);
     box-shadow: 1px 1px 5px  #999999;
     margin-right: 2%;
+    overflow: scroll;
   
   }
+
+
 
 
   a {color:black; text-decoration:none;}
