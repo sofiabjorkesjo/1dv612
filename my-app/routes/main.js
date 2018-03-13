@@ -336,7 +336,7 @@ router.post('/dashboard/active', function(req, res) {
 router.get('/:code', function (req, res, next) {
     let temporaryCode = req.url.substring(1);
    
-    request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'redirect_uri=http://localhost:3000/dashboard&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
+    request('https://github.com/login/oauth/access_token?' + 'client_id=80168115df9ea9d87e1f&' + 'client_secret=' + process.env.REACT_APP_CLIENT_SECRET + '&' + 'code=' + temporaryCode,{
         method: 'POST',
         header: {
             'content-type': 'application/json'
