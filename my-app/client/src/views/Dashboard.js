@@ -173,11 +173,6 @@ class Dashboard extends Component {
       this.props.routes()
       this.callApi()
       .then(res => this.setState({response: res.express.substring(13, 53)}))
-      // .then(res => {return localStorage.setItem('token', res.express.substring(13, 53))})
-      // .then(res => {return 
-      //   let access = localStorage.getItem('token');
-      //   this.setState({response: access});
-      // })
       .then(res => {
         return fetch('https://api.github.com/user?access_token=' + this.state.response, {
         method: 'GET'

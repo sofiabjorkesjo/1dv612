@@ -160,7 +160,7 @@ router.post('/webhook', function(req, res) {
         eventPush = 'push ';
         let organisation = req.body.repository.organization;
         let eventAndOrganisation = eventPush + organisation;
-        console.log(eventAndOrganisation);
+
         orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
             if(err) {
                 res.send({'error':err});
@@ -198,7 +198,7 @@ router.post('/webhook', function(req, res) {
         eventRelease = 'release ';
         let organisation = req.body.organization.login;
         let eventAndOrganisation = eventRelease + organisation;
-        console.log(eventAndOrganisation);
+
         orgsSchema.find({organisations: eventAndOrganisation}, function(err, result) {
             if(err) {
                 res.send({'error':err});
@@ -260,13 +260,11 @@ router.post('/dashboard/events', function(req, res) {
         return orgsSchema.findOne({username: req.body.username});
     })
     .then(function(user) {
-        console.log(user);
         user.organisations.forEach(function(org) {
             let date1;
             let date2;
             if(org.includes('issues')) {
                 for(let i = 0; i < allOrgsEvents.length; i++) {
-                   // console.log('hello :) ' + allOrgsEvents[i].created_at);
                     date1 = new Date(allOrgsEvents[i].created_at);
                     date2 = new Date(savedTime);
                     if(allOrgsEvents[i].type === 'IssuesEvent' && date1.getTime() > date2.getTime()) {
@@ -284,7 +282,6 @@ router.post('/dashboard/events', function(req, res) {
                     }
                 }
             }
-            //console.log(savedTime + ' :DDD')
             if(org.includes('release')) {
                 for(let i = 0; i < allOrgsEvents.length; i++) {
                     date1 = new Date(allOrgsEvents[i].created_at);
@@ -296,11 +293,6 @@ router.post('/dashboard/events', function(req, res) {
                 }
             }
         })
-        for(let i = 0; i < filterdEvents.length; i ++) {
-            //console.log(filterdEvents[i].created_at + '  :DDD')
-        }
-        console.log('dadsadada');
-        console.log(filterdEvents.length);
         res.send({'events': filterdEvents, 'user': req.body.username})
     });
 })

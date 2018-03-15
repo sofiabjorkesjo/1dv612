@@ -4,22 +4,10 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 import Settings from './views/Settings';
 import Dashboard from './views/Dashboard'
 
-
-
  class App extends Component {
-  constructor(props) {
-    
+  constructor(props) {   
     super(props)
-
-    this.state = {
-      loggedIn: 'false',
-      test: 'test' 
-    };  
   }
-
-   changeState() {
-     this.setState({loggedIn: 'true'})
-   }
 
    logoutFunction() {
     localStorage.removeItem('username'); 
@@ -47,7 +35,7 @@ import Dashboard from './views/Dashboard'
             </div>
           <div>
           <div>    
-            <Route path="/dashboard" render={()=><Dashboard routes={this.changeState.bind(this)} callbackFromParent={this.callback} {...this.state}/>}/>           
+            <Route path="/dashboard" render={()=><Dashboard callbackFromParent={this.callback} {...this.state}/>}/>           
             <Route path="/Settings" render={()=><Settings />}/>                    
             </div>
           </div>
