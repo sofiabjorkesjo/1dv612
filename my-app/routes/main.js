@@ -89,13 +89,18 @@ function findallorgs() {
     })
 }
 
-
+let connect = false;
 findAllUsers();
 findallorgs();
 io.on('connection', function(socket) {
-console.log('connectade till sockets');   
+console.log('connectade till sockets');  
+connect = true; 
     allUsers.forEach(function(element) {
         socket.join(element.username);
+    });
+    socket.on('disconnect', function () {
+        connect = false;
+        console.log('disconnected');
     });
 })
 
@@ -136,14 +141,16 @@ router.post('/webhook', function(req, res) {
                 }
                 
                 usernames.forEach(function(element) {
-                    io.sockets.in(element).emit(element, issueObj);
+                    if(connect === false) {
+                        email.forEach(function(element) {
+                            let issue = ' en ny issue!'
+                            sendEmail(element, issue);
+                        })
+                    } else {
+                        io.sockets.in(element).emit(element, issueObj)
+                    }  
                 })
-                email.forEach(function(element) {
-                    let issue = ' en ny issue!'
-                    sendEmail(element, issue);
-                })
-
-                
+ 
             }
         })
     }
@@ -425,7 +432,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://149c6cdd.ngrok.io/main/webhook',
+                'url': 'http://c2de8a6e.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })
@@ -465,15 +472,15 @@ var transporter = nodemailer.createTransport({
     secure: true,
     service: 'gmail',
     auth: {
-        user: 'sofiiiabjorkesjo@gmail.com',
-        pass: 'sussiecleo'
+        user: 'sb223fz@gmail.com',
+        pass: '1dv612Skola'
     }
 });
 
 function sendEmail(email, subject) {
         console.log('sending email!');
         var mailOptions = {
-            from: 'sofiiiabjorkesjo@gmail.com',
+            from: 'sb223fz@gmail.com',
             to: email,
             subject: 'Notification' + subject,
             text: 'Du har en ny notifikation!' + subject

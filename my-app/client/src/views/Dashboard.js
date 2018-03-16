@@ -110,7 +110,7 @@ class Dashboard extends Component {
   }
 
   async saveUser(res) {
-    await this.setState({name: res.name});
+    await this.setState({name: res.login});
     await this.setState({email: res.email})
 
   }
@@ -170,7 +170,6 @@ class Dashboard extends Component {
       this.setState({name: username})
       this.postUserToServer()     
     } else {
-      this.props.routes()
       this.callApi()
       .then(res => this.setState({response: res.express.substring(13, 53)}))
       .then(res => {
@@ -276,7 +275,6 @@ class Dashboard extends Component {
          
           <div>{this.testArray}</div>
         </div>
-        <p>{this.props.loggedIn} aaaa</p>
       </div>
         );
       }

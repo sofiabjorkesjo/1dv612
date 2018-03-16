@@ -6,9 +6,11 @@ class Settings extends Component {
     super(props)
     this.state = {
       orgs: [],
-      disabled: false
+      disabled: false,
+      choosen: []
     }
     this.checkedBoxes = [];
+    this.organisations = [];
   }
 
   sendUserToServer() {
@@ -112,6 +114,12 @@ class Settings extends Component {
   save(event) {
     event.preventDefault();
     this.sendToServer(this.checkedBoxes)
+    
+    for(let i = 0; i < this.checkedBoxes.length; i++) {
+      this.organisations.push(<p key={i}>{this.checkedBoxes[i]}</p>)
+    }
+
+    this.setState({choosen: this.organisations})
   }
 
   sendToServer = function(data) {
@@ -142,12 +150,18 @@ class Settings extends Component {
     
     return (
       <main>
+        <div>
+        <p>Dina valda organisationer är:</p>
+        {this.state.choosen}
+        {this.organisations}
+      </div>
       <div>
         <form onSubmit={this.save.bind(this)}>
         {this.renderOrganisations()}  
         <input type="Submit" value="submit" readOnly/>
         </form>
       </div>
+   
      </main>
         );
       }  
