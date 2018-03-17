@@ -97,6 +97,10 @@ console.log('connectade till sockets');
 connect = true; 
     allUsers.forEach(function(element) {
         socket.join(element.username);
+        console.log(socket.rooms);
+        // if(socket.rooms.indexOf(room) >= 0) {
+        //     console.log('sadaddsadsa adsajfa djaldj');
+        // }
     });
     socket.on('disconnect', function () {
         connect = false;
@@ -140,15 +144,21 @@ router.post('/webhook', function(req, res) {
                     email.push(result[i].email)
                 }
                 
+                
                 usernames.forEach(function(element) {
-                    if(connect === false) {
+                    console.log(element);
+                    var room = io.sockets.adapter.rooms[element];
+                    //FUNKAR INTE PÅ SERVERN !!!!!
+                    if(room) {
+                        console.log('den ska skicka socket');
+                        io.sockets.in(element).emit(element, issueObj)
+                    } else {
+                        console.log('den ska skicka mail')
                         email.forEach(function(element) {
                             let issue = ' en ny issue!'
                             sendEmail(element, issue);
                         })
-                    } else {
-                        io.sockets.in(element).emit(element, issueObj)
-                    }  
+                    }
                 })
  
             }
@@ -432,7 +442,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://c2de8a6e.ngrok.io/main/webhook',
+                'url': 'http://5ff7d825.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })

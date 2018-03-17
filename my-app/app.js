@@ -4,7 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 let database = require('./config/database');
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 database();
 
