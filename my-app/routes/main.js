@@ -143,22 +143,21 @@ router.post('/webhook', function(req, res) {
                     usernames.push(result[i].username);
                     email.push(result[i].email)
                 }
-                
+                console.log('aaadaa');
                 
                 usernames.forEach(function(element) {
+                    console.log('sadadad');
                     console.log(element);
-                    var room = io.sockets.adapter.rooms[element];
-                    //FUNKAR INTE PÅ SERVERN !!!!!
-                    if(room) {
+          
                         console.log('den ska skicka socket');
                         io.sockets.in(element).emit(element, issueObj)
-                    } else {
+
                         console.log('den ska skicka mail')
                         email.forEach(function(element) {
                             let issue = ' en ny issue!'
                             sendEmail(element, issue);
                         })
-                    }
+
                 })
  
             }
@@ -442,7 +441,7 @@ function createWebhook() {
                 'active': true,
                 events,
                 'config': {
-                'url': 'http://5ff7d825.ngrok.io/main/webhook',
+                'url': 'http://1cc98376.ngrok.io/main/webhook',
                 'content_type': 'json'
                 }
             })
