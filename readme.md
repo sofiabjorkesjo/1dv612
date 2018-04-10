@@ -1,5 +1,5 @@
 För att köra applikationen:
-1. gå in på http://159.203.165.169:3000/
+1. gå in på http://159.203.165.169:4000/
 2. Klicka på logga in, och logga in med dina inloggningsuppgifter till github.
 
 Användning:
